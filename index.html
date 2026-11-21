@@ -76,16 +76,41 @@
       justify-content: space-between;
       min-height: 126px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      transition: border-color 0.08s ease;
+    }
+    .relay-card.is-on {
+      border-color: rgba(129, 140, 248, 0.42);
+      box-shadow: 0 8px 22px rgba(91, 92, 230, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     .relay-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
     .relay-icon-box { width: 72px; height: 54px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
+    .relay-icon-box svg { display: block; }
 
-    .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; margin-top: 2px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #36363f; transition: 0.12s; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; transition: 0.12s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
+    /* Công tắc chuyển trạng thái tức thì, không trễ transition */
+    .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; margin-top: 2px; cursor: pointer; }
+    .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #36363f; transition: background-color 0.06s linear; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; transition: transform 0.06s linear; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.4); will-change: transform; }
     input:checked + .slider { background-color: #5b5ce6; }
     input:checked + .slider:before { transform: translateX(22px); }
+
+    /* Trạng thái hiệu ứng bật/tắt điều khiển bằng class CSS thay vì thay thế toàn bộ SVG */
+    .relay-card .fx-on { opacity: 0; transition: opacity 0.06s linear; }
+    .relay-card.is-on .fx-on { opacity: 1; }
+    .relay-card .lamp-fill { fill: #525663; transition: fill 0.06s linear; }
+    .relay-card.is-on .lamp-fill { fill: #F8FAFC; }
+    .relay-card .ceil-fill { fill: #4B505C; transition: fill 0.06s linear; }
+    .relay-card.is-on .ceil-fill { fill: #FFFDF0; }
+    .relay-card .fan-ring { stroke: #6B7280; fill: rgba(14, 165, 233, 0.03); transition: all 0.06s linear; }
+    .relay-card.is-on .fan-ring { stroke: #BAE6FD; fill: rgba(14, 165, 233, 0.14); }
+    .relay-card .fan-b1 { fill: #64748B; transition: fill 0.06s linear; }
+    .relay-card.is-on .fan-b1 { fill: #38BDF8; }
+    .relay-card .fan-b2 { fill: #475569; transition: fill 0.06s linear; }
+    .relay-card.is-on .fan-b2 { fill: #0EA5E9; }
+    .relay-card .fan-b3 { fill: #94A3B8; transition: fill 0.06s linear; }
+    .relay-card.is-on .fan-b3 { fill: #7DD3FC; }
+    .relay-card .desk-beam { opacity: 0.08; transition: opacity 0.06s linear; }
+    .relay-card.is-on .desk-beam { opacity: 0.65; }
 
     .relay-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
     .relay-title { font-size: 16px; font-weight: 500; color: #f3f3f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -105,8 +130,9 @@
       justify-content: space-between;
       cursor: pointer;
       box-shadow: 0 8px 24px rgba(84, 85, 232, 0.38);
+      transition: transform 0.05s linear;
     }
-    .master-btn:active { transform: scale(0.99); }
+    .master-btn:active { transform: scale(0.985); }
     .master-btn-center { display: flex; align-items: center; gap: 11px; }
 
     .bottom-nav {
@@ -405,6 +431,11 @@
     const FIREBASE_STATE_URL = "https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app/toansmarthome/state.json";
     const FIREBASE_CMD_URL   = "https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app/toansmarthome/cmd.json";
 
+    const USER_LOCK_MS = 1800;
+    let relayLockUntil = [0, 0, 0, 0, 0, 0];
+    let pendingCmdQueue = [];
+    let isFlushingCmd = false;
+
     let stateData = {
       wifiConnected: true,
       firebaseConnected: true,
@@ -415,7 +446,7 @@
       ssid: "May Tinh Toan Nga",
       location: "Hà Nội",
       dateStr: "Th 7, 21/11/2026",
-      clockHm: "12:14",
+      clockHm: "12:23",
       weatherTemp: 28,
       weatherHum: 72,
       weatherDesc: "Có mây",
@@ -430,21 +461,21 @@
     let timerSelectInitialized = false;
     let isFetchingStatus = false;
 
-    function getDeviceSvg(idx, isOn) {
+    function getDeviceSvgTemplate(idx) {
       switch (idx) {
         case 0:
           return `<svg width="68" height="48" viewBox="0 0 68 48" fill="none">
-            <defs><radialGradient id="ceilBeam" cx="50%" cy="20%" r="75%"><stop offset="0%" stop-color="#FFFBEB" stop-opacity="${isOn ? '0.95' : '0.15'}"/><stop offset="55%" stop-color="#FDE047" stop-opacity="${isOn ? '0.45' : '0'}"/><stop offset="100%" stop-color="#FDE047" stop-opacity="0"/></radialGradient></defs>
-            ${isOn ? '<ellipse cx="34" cy="27" rx="28" ry="18" fill="url(#ceilBeam)"/>' : ''}
+            <defs><radialGradient id="ceilBeam" cx="50%" cy="20%" r="75%"><stop offset="0%" stop-color="#FFFBEB" stop-opacity="0.95"/><stop offset="55%" stop-color="#FDE047" stop-opacity="0.45"/><stop offset="100%" stop-color="#FDE047" stop-opacity="0"/></radialGradient></defs>
+            <ellipse class="fx-on" cx="34" cy="27" rx="28" ry="18" fill="url(#ceilBeam)"/>
             <ellipse cx="34" cy="16" rx="23" ry="8.5" fill="#1F2028" stroke="#6B7280" stroke-width="1.4"/>
-            <ellipse cx="34" cy="17.5" rx="18" ry="6" fill="${isOn ? '#FFFDF0' : '#4B505C'}"/>
+            <ellipse class="ceil-fill" cx="34" cy="17.5" rx="18" ry="6"/>
           </svg>`;
         case 1:
           return `<svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-            <defs><radialGradient id="bulbGlow" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="${isOn ? '0.9' : '0'}"/><stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/></radialGradient></defs>
-            ${isOn ? '<circle cx="26" cy="21" r="21" fill="url(#bulbGlow)"/>' : ''}
-            <path d="M26 5C17.2 5 10 12.2 10 21c0 5.8 3.1 10.9 7.8 13.7 1.4.8 2.2 2.3 2.2 3.9V40h12v-1.4c0-1.6.8-3.1 2.2-3.9C38.9 31.9 42 26.8 42 21 42 12.2 34.8 5 26 5z" fill="${isOn ? '#F8FAFC' : '#525663'}"/>
-            <ellipse cx="21" cy="16" rx="3.4" ry="6.2" transform="rotate(-18 21 16)" fill="#FFFFFF" opacity="${isOn ? '0.85' : '0.2'}"/>
+            <defs><radialGradient id="bulbGlow" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/><stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/></radialGradient></defs>
+            <circle class="fx-on" cx="26" cy="21" r="21" fill="url(#bulbGlow)"/>
+            <path class="lamp-fill" d="M26 5C17.2 5 10 12.2 10 21c0 5.8 3.1 10.9 7.8 13.7 1.4.8 2.2 2.3 2.2 3.9V40h12v-1.4c0-1.6.8-3.1 2.2-3.9C38.9 31.9 42 26.8 42 21 42 12.2 34.8 5 26 5z"/>
+            <ellipse cx="21" cy="16" rx="3.4" ry="6.2" transform="rotate(-18 21 16)" fill="#FFFFFF" opacity="0.55"/>
             <rect x="20.5" y="40" width="11" height="7" rx="2" fill="#9CA3AF"/>
           </svg>`;
         case 2:
@@ -457,10 +488,10 @@
           </svg>`;
         case 3:
           return `<svg width="54" height="54" viewBox="0 0 54 54" fill="none">
-            <circle cx="27" cy="21" r="16.5" stroke="${isOn ? '#BAE6FD' : '#6B7280'}" stroke-width="1.8" fill="rgba(14, 165, 233, ${isOn ? '0.12' : '0.03'})"/>
-            <path d="M27 21L22 9.5C25 8 29 8 32 9.5L27 21Z" fill="${isOn ? '#38BDF8' : '#64748B'}"/>
-            <path d="M27 21L38.5 25C38.5 28.5 36.4 31.5 33.4 33L27 21Z" fill="${isOn ? '#0EA5E9' : '#475569'}"/>
-            <path d="M27 21L15.5 25C15.5 28.5 17.6 31.5 20.6 33L27 21Z" fill="${isOn ? '#7DD3FC' : '#94A3B8'}"/>
+            <circle class="fan-ring" cx="27" cy="21" r="16.5" stroke-width="1.8"/>
+            <path class="fan-b1" d="M27 21L22 9.5C25 8 29 8 32 9.5L27 21Z"/>
+            <path class="fan-b2" d="M27 21L38.5 25C38.5 28.5 36.4 31.5 33.4 33L27 21Z"/>
+            <path class="fan-b3" d="M27 21L15.5 25C15.5 28.5 17.6 31.5 20.6 33L27 21Z"/>
             <circle cx="27" cy="21" r="3.6" fill="#F8FAFC"/>
             <rect x="25" y="37.5" width="4" height="9" fill="#CBD5E1"/><ellipse cx="27" cy="47.5" rx="11" ry="3.2" fill="#E2E8F0"/>
           </svg>`;
@@ -476,7 +507,7 @@
             <ellipse cx="24" cy="44" rx="12" ry="3.2" fill="#D97706"/>
             <path d="M24 43L32 25L22 13" stroke="#F59E0B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M18 12L34 8L41 19L23 22L18 12Z" fill="#27272A" stroke="#71717A" stroke-width="1.4"/>
-            <path d="M33 20.5L47 42H27L33 20.5Z" fill="#FDE047" opacity="${isOn ? '0.62' : '0.08'}"/>
+            <path class="desk-beam" d="M33 20.5L47 42H27L33 20.5Z" fill="#FDE047"/>
           </svg>`;
       }
     }
@@ -532,9 +563,10 @@
       for (let idx = 0; idx < NUM_RELAYS; idx++) {
         const card = document.createElement('div');
         card.className = 'relay-card';
+        card.id = `rCard_${idx}`;
         card.innerHTML = `
           <div class="relay-top">
-            <div class="relay-icon-box" id="rIcon_${idx}" onclick="toggleRelay(${idx})"></div>
+            <div class="relay-icon-box" onclick="toggleRelay(${idx})">${getDeviceSvgTemplate(idx)}</div>
             <label class="switch">
               <input type="checkbox" id="rChk_${idx}" onchange="onSwitchChange(${idx}, this.checked)">
               <span class="slider"></span>
@@ -548,15 +580,27 @@
       }
     }
 
-    function updateRelayCardUI(idx, st) {
+    function updateMasterButtonUI() {
+      anyDeviceOn = stateData.relays.some(Boolean);
+      const txt = document.getElementById('masterBtnText');
+      if (txt) {
+        txt.innerText = anyDeviceOn ? 'Tắt tất cả thiết bị' : 'Bật tất cả thiết bị';
+      }
+    }
+
+    function applyRelayVisualInstant(idx, st) {
       stateData.relays[idx] = st;
+      const card = document.getElementById(`rCard_${idx}`);
       const chk = document.getElementById(`rChk_${idx}`);
-      const iconBox = document.getElementById(`rIcon_${idx}`);
       const titleEl = document.getElementById(`rTitle_${idx}`);
       const timerEl = document.getElementById(`rTimer_${idx}`);
-      if (chk) chk.checked = st;
-      if (iconBox) iconBox.innerHTML = getDeviceSvg(idx, st);
-      if (titleEl) titleEl.innerText = (stateData.names && stateData.names[idx]) || `Relay ${idx + 1}`;
+
+      if (card) card.classList.toggle('is-on', st);
+      if (chk && chk.checked !== st) chk.checked = st;
+      if (titleEl) {
+        const nextTitle = (stateData.names && stateData.names[idx]) || `Relay ${idx + 1}`;
+        if (titleEl.innerText !== nextTitle) titleEl.innerText = nextTitle;
+      }
 
       const rem = (stateData.timers && stateData.timers[idx]) || 0;
       const target = (stateData.timerTargets && stateData.timerTargets[idx]) ? 'BẬT' : 'TẮT';
@@ -569,8 +613,7 @@
         }
       }
 
-      anyDeviceOn = stateData.relays.some(Boolean);
-      document.getElementById('masterBtnText').innerText = anyDeviceOn ? 'Tắt tất cả thiết bị' : 'Bật tất cả thiết bị';
+      updateMasterButtonUI();
     }
 
     function renderHome(data) {
@@ -598,29 +641,52 @@
       }
 
       buildRelayGridOnce();
+      const now = Date.now();
       const relays = Array.isArray(data.relays) ? data.relays : stateData.relays;
       for (let idx = 0; idx < NUM_RELAYS; idx++) {
-        updateRelayCardUI(idx, Boolean(relays[idx]));
+        if (now < relayLockUntil[idx]) continue;
+        applyRelayVisualInstant(idx, Boolean(relays[idx]));
       }
     }
 
-    async function sendFirebaseCmd(cmdObj) {
-      try {
-        await fetch(FIREBASE_CMD_URL, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(cmdObj)
-        });
-      } catch (e) {}
+    async function flushCmdQueue() {
+      if (isFlushingCmd || pendingCmdQueue.length === 0) return;
+      isFlushingCmd = true;
+      while (pendingCmdQueue.length > 0) {
+        const cmdObj = pendingCmdQueue.shift();
+        try {
+          await fetch(FIREBASE_CMD_URL, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(cmdObj),
+            keepalive: true
+          });
+        } catch (e) {}
+      }
+      isFlushingCmd = false;
+    }
+
+    function enqueueFirebaseCmd(cmdObj) {
+      pendingCmdQueue.push(cmdObj);
+      flushCmdQueue();
     }
 
     async function refreshAll() {
-      if (isFetchingStatus) return;
+      if (isFetchingStatus || pendingCmdQueue.length > 0) return;
       isFetchingStatus = true;
       try {
         const res = await fetch(FIREBASE_STATE_URL, { cache: 'no-store' });
         const remote = await res.json();
         if (remote && typeof remote === 'object') {
+          const now = Date.now();
+          const mergedRelays = stateData.relays.slice();
+          if (Array.isArray(remote.relays) && remote.relays.length === NUM_RELAYS) {
+            for (let i = 0; i < NUM_RELAYS; i++) {
+              if (now >= relayLockUntil[i]) {
+                mergedRelays[i] = Boolean(remote.relays[i]);
+              }
+            }
+          }
           stateData = {
             ...stateData,
             ...remote,
@@ -628,7 +694,7 @@
             firebaseConnected: true,
             mode: "Firebase Realtime DB",
             names: Array.isArray(remote.names) && remote.names.length === NUM_RELAYS ? remote.names : stateData.names,
-            relays: Array.isArray(remote.relays) && remote.relays.length === NUM_RELAYS ? remote.relays : stateData.relays,
+            relays: mergedRelays,
             timers: Array.isArray(remote.timers) && remote.timers.length === NUM_RELAYS ? remote.timers : stateData.timers,
             timerTargets: Array.isArray(remote.timerTargets) && remote.timerTargets.length === NUM_RELAYS ? remote.timerTargets : stateData.timerTargets
           };
@@ -648,22 +714,26 @@
     }
 
     function onSwitchChange(idx, nextState) {
-      updateRelayCardUI(idx, nextState);
-      sendFirebaseCmd({ setCh: idx, setState: nextState });
+      relayLockUntil[idx] = Date.now() + USER_LOCK_MS;
+      applyRelayVisualInstant(idx, nextState);
+      enqueueFirebaseCmd({ setCh: idx, setState: nextState });
     }
 
     function toggleRelay(idx) {
       const nextState = !Boolean(stateData.relays[idx]);
-      updateRelayCardUI(idx, nextState);
-      sendFirebaseCmd({ setCh: idx, setState: nextState });
+      relayLockUntil[idx] = Date.now() + USER_LOCK_MS;
+      applyRelayVisualInstant(idx, nextState);
+      enqueueFirebaseCmd({ setCh: idx, setState: nextState });
     }
 
     function toggleAllDevices() {
       const nextState = anyDeviceOn ? 0 : 1;
+      const lockUntil = Date.now() + USER_LOCK_MS;
       for (let i = 0; i < NUM_RELAYS; i++) {
-        updateRelayCardUI(i, nextState === 1);
+        relayLockUntil[i] = lockUntil;
+        applyRelayVisualInstant(i, nextState === 1);
       }
-      sendFirebaseCmd({ all: nextState });
+      enqueueFirebaseCmd({ all: nextState });
     }
 
     function populateTimerChannels() {
@@ -707,16 +777,16 @@
         document.getElementById('timerFeedback').innerText = 'Vui lòng nhập số phút >= 1';
         return;
       }
-      await sendFirebaseCmd({ timerCh: idx, timerMin: mins, timerTarget: target === 1 });
+      enqueueFirebaseCmd({ timerCh: idx, timerMin: mins, timerTarget: target === 1 });
       document.getElementById('timerFeedback').innerText = `Đã gửi hẹn giờ ${mins} phút cho Relay ${idx + 1}!`;
-      setTimeout(refreshAll, 500);
+      setTimeout(refreshAll, 600);
     }
 
     async function cancelTimer() {
       const idx = parseInt(document.getElementById('timerChannel').value, 10);
-      await sendFirebaseCmd({ timerCh: idx, timerMin: 0, timerTarget: false });
+      enqueueFirebaseCmd({ timerCh: idx, timerMin: 0, timerTarget: false });
       document.getElementById('timerFeedback').innerText = 'Đã hủy hẹn giờ.';
-      setTimeout(refreshAll, 500);
+      setTimeout(refreshAll, 600);
     }
 
     async function loadWeeklySchedules() {
@@ -786,7 +856,7 @@
 
     renderHome(stateData);
     refreshAll();
-    setInterval(refreshAll, 800);
+    setInterval(refreshAll, 1000);
   </script>
 </body>
 </html>
