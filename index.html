@@ -8,28 +8,29 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background-color: #08070d;
+      background-color: #09080e;
       background-image:
-        radial-gradient(circle at 75% 18%, rgba(112, 82, 224, 0.28) 0%, rgba(18, 15, 32, 0) 48%),
-        radial-gradient(circle at 20% 78%, rgba(88, 66, 185, 0.14) 0%, rgba(8, 7, 13, 0) 50%);
+        radial-gradient(circle at 72% 14%, rgba(126, 92, 240, 0.25) 0%, rgba(18, 15, 32, 0) 45%),
+        radial-gradient(circle at 18% 82%, rgba(88, 66, 185, 0.14) 0%, rgba(9, 8, 14, 0) 52%);
       color: #ffffff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding-bottom: 92px;
+      padding-bottom: 96px;
     }
-    .app { width: 100%; max-width: 440px; padding: 18px 18px 12px; }
+    .app { width: 100%; max-width: 440px; padding: 18px 16px 12px; }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 18px;
+      padding: 0 2px;
     }
-    .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
+    .header h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.4px; }
     .wifi-indicator { display: flex; align-items: center; gap: 8px; }
-    .wifi-led-svg { width: 38px; height: 38px; flex-shrink: 0; }
-    .wifi-led-label { font-size: 13px; font-weight: 600; line-height: 1.2; color: #22e53b; text-align: center; }
+    .wifi-led-svg { width: 42px; height: 42px; flex-shrink: 0; }
+    .wifi-led-label { font-size: 13.5px; font-weight: 600; line-height: 1.18; color: #22e53b; text-align: center; }
     .wifi-indicator.offline .wifi-led-label { color: #fbbf24; }
     @keyframes pulseLed {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -65,74 +66,48 @@
       padding-left: 2px;
     }
 
-    .relay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
+    .relay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; margin-bottom: 18px; }
     .relay-card {
-      background: linear-gradient(155deg, rgba(36, 35, 44, 0.92) 0%, rgba(23, 22, 29, 0.96) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: linear-gradient(155deg, #2d2c36 0%, #1b1a22 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.24);
       border-radius: 22px;
-      padding: 14px 15px 15px;
+      padding: 13px 14px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 126px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      transition: border-color 0.08s ease;
+      min-height: 116px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
-    .relay-card.is-on {
-      border-color: rgba(129, 140, 248, 0.42);
-      box-shadow: 0 8px 22px rgba(91, 92, 230, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-    .relay-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
-    .relay-icon-box { width: 72px; height: 54px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
-    .relay-icon-box svg { display: block; }
+    .relay-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .relay-icon-box { width: 72px; height: 50px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
 
-    /* Công tắc chuyển trạng thái tức thì, không trễ transition */
-    .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; margin-top: 2px; cursor: pointer; }
-    .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #36363f; transition: background-color 0.06s linear; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; transition: transform 0.06s linear; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.4); will-change: transform; }
-    input:checked + .slider { background-color: #5b5ce6; }
-    input:checked + .slider:before { transform: translateX(22px); }
-
-    /* Trạng thái hiệu ứng bật/tắt điều khiển bằng class CSS thay vì thay thế toàn bộ SVG */
-    .relay-card .fx-on { opacity: 0; transition: opacity 0.06s linear; }
-    .relay-card.is-on .fx-on { opacity: 1; }
-    .relay-card .lamp-fill { fill: #525663; transition: fill 0.06s linear; }
-    .relay-card.is-on .lamp-fill { fill: #F8FAFC; }
-    .relay-card .ceil-fill { fill: #4B505C; transition: fill 0.06s linear; }
-    .relay-card.is-on .ceil-fill { fill: #FFFDF0; }
-    .relay-card .fan-ring { stroke: #6B7280; fill: rgba(14, 165, 233, 0.03); transition: all 0.06s linear; }
-    .relay-card.is-on .fan-ring { stroke: #BAE6FD; fill: rgba(14, 165, 233, 0.14); }
-    .relay-card .fan-b1 { fill: #64748B; transition: fill 0.06s linear; }
-    .relay-card.is-on .fan-b1 { fill: #38BDF8; }
-    .relay-card .fan-b2 { fill: #475569; transition: fill 0.06s linear; }
-    .relay-card.is-on .fan-b2 { fill: #0EA5E9; }
-    .relay-card .fan-b3 { fill: #94A3B8; transition: fill 0.06s linear; }
-    .relay-card.is-on .fan-b3 { fill: #7DD3FC; }
-    .relay-card .desk-beam { opacity: 0.08; transition: opacity 0.06s linear; }
-    .relay-card.is-on .desk-beam { opacity: 0.65; }
+    .switch { position: relative; display: inline-block; width: 52px; height: 29px; flex-shrink: 0; margin-top: 2px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #3d3c47; transition: 0.14s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 23px; width: 23px; left: 3px; bottom: 3px; background-color: #ffffff; transition: 0.14s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.45); }
+    input:checked + .slider { background-color: #635bff; }
+    input:checked + .slider:before { transform: translateX(23px); }
 
     .relay-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .relay-title { font-size: 16px; font-weight: 500; color: #f3f3f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .relay-title { font-size: 16px; font-weight: 500; color: #f5f5fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .timer-badge { font-size: 10.5px; font-weight: 600; color: #fde047; background: rgba(250, 204, 21, 0.16); padding: 2px 6px; border-radius: 8px; flex-shrink: 0; }
 
     .master-btn {
       width: 100%;
-      background: linear-gradient(90deg, #4b4ce0 0%, #6162f0 50%, #5253e6 100%);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: linear-gradient(90deg, #5248e5 0%, #6c5ce7 50%, #5b52e8 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.32);
       border-radius: 999px;
       padding: 15px 22px;
       color: #ffffff;
-      font-size: 16.5px;
+      font-size: 17px;
       font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      box-shadow: 0 8px 24px rgba(84, 85, 232, 0.38);
-      transition: transform 0.05s linear;
+      box-shadow: 0 8px 24px rgba(99, 91, 255, 0.35);
     }
-    .master-btn:active { transform: scale(0.985); }
+    .master-btn:active { transform: scale(0.99); }
     .master-btn-center { display: flex; align-items: center; gap: 11px; }
 
     .bottom-nav {
@@ -142,40 +117,53 @@
       transform: translateX(-50%);
       width: 100%;
       max-width: 440px;
-      height: 76px;
-      background: linear-gradient(180deg, #25242e 0%, #191820 100%);
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
+      height: 78px;
+      background: linear-gradient(180deg, #272630 0%, #191820 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
       display: flex;
       justify-content: space-around;
       align-items: center;
       padding: 4px 10px 8px;
-      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.55);
       z-index: 50;
     }
-    .nav-btn { background: none; border: none; color: #9e9eb0; font-size: 12px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 6px 12px; }
-    .nav-btn.active { color: #818cf8; }
-    .nav-btn.active::after { content: ""; width: 28px; height: 3px; background: #818cf8; border-radius: 3px; margin-top: 1px; }
+    .nav-btn { background: none; border: none; color: #a4a4b6; font-size: 12px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 6px 12px; }
+    .nav-btn.active { color: #8c82ff; }
+    .nav-btn.active::after { content: ""; width: 32px; height: 3px; background: #8c82ff; border-radius: 3px; margin-top: 1px; }
 
     .tab-view { display: none; }
     .tab-view.active { display: block; }
     .page-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
-    .panel-card { background: rgba(29, 28, 37, 0.94); border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 22px; padding: 16px; margin-bottom: 14px; }
+    .panel-card { background: rgba(29, 28, 37, 0.94); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 22px; padding: 16px; margin-bottom: 14px; }
     .panel-title { font-size: 15.5px; font-weight: 600; color: #e2e4f0; margin-bottom: 12px; }
     .field { margin-bottom: 12px; }
     .field label { display: block; font-size: 12.5px; color: #9e9eb0; margin-bottom: 6px; }
-    .input-ctrl { width: 100%; background: #121118; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; padding: 11px 12px; color: #ffffff; font-size: 14px; outline: none; }
+    .input-ctrl { width: 100%; background: #121118; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 12px; padding: 11px 12px; color: #ffffff; font-size: 14px; outline: none; }
     .input-ctrl:focus { border-color: #6366f1; }
     .row-2 { display: flex; gap: 10px; }
     .btn-primary { width: 100%; background: #5b5ce6; color: #fff; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; }
     .btn-on { flex: 1; background: #22c55e; color: #05200e; border: none; border-radius: 12px; padding: 11px; font-weight: 600; cursor: pointer; }
     .btn-off { flex: 1; background: #ef4444; color: #fff; border: none; border-radius: 12px; padding: 11px; font-weight: 600; cursor: pointer; }
-    .btn-subtle { background: #2b2a36; color: #e4e4ec; border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; }
+    .btn-subtle { background: #2b2a36; color: #e4e4ec; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 7px 12px; font-size: 12.5px; cursor: pointer; }
     .days-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 13px; color: #d4d4e0; }
     .days-grid label { display: flex; align-items: center; gap: 6px; background: #14131b; padding: 7px 9px; border-radius: 10px; cursor: pointer; }
     .info-box { background: #13121a; border-radius: 12px; padding: 11px 12px; font-size: 12.5px; color: #b4b4c4; line-height: 1.55; margin-bottom: 12px; }
     .feedback { font-size: 13px; color: #4ade80; margin-top: 8px; text-align: center; }
+    .device-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 11px;
+      background: #14131b;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .pill-on { color: #4ade80; font-weight: 600; }
+    .pill-off { color: #94a3b8; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -187,8 +175,8 @@
           <svg class="wifi-led-svg" id="wifiLedSvg" viewBox="0 0 44 44" fill="none">
             <defs>
               <radialGradient id="ledGlowGreen" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#4ADE80" stop-opacity="0.9"/>
-                <stop offset="55%" stop-color="#22C55E" stop-opacity="0.35"/>
+                <stop offset="0%" stop-color="#4ADE80" stop-opacity="0.95"/>
+                <stop offset="55%" stop-color="#22C55E" stop-opacity="0.38"/>
                 <stop offset="100%" stop-color="#22C55E" stop-opacity="0"/>
               </radialGradient>
               <radialGradient id="ledGlowWarn" cx="50%" cy="50%" r="50%">
@@ -214,20 +202,31 @@
       <div class="weather-hero">
         <div class="weather-left">
           <div class="weather-icon-wrap">
-            <svg width="62" height="52" viewBox="0 0 68 56" fill="none">
-              <circle cx="26" cy="21" r="11.5" fill="#FACC15"/>
-              <g stroke="#FACC15" stroke-width="2.4" stroke-linecap="round">
-                <line x1="26" y1="4" x2="26" y2="7.5"/><line x1="26" y1="34.5" x2="26" y2="38"/>
-                <line x1="9" y1="21" x2="12.5" y2="21"/><line x1="39.5" y1="21" x2="43" y2="21"/>
-                <line x1="14" y1="9" x2="16.5" y2="11.5"/><line x1="35.5" y1="30.5" x2="38" y2="33"/>
-                <line x1="38" y1="9" x2="35.5" y2="11.5"/><line x1="16.5" y1="30.5" x2="14" y2="33"/>
-              </g>
-              <path d="M22 48h28a10 10 0 0 0 1.4-19.9A13.5 13.5 0 0 0 25.5 23 9.5 9.5 0 0 0 22 48z" fill="url(#cloudGrad)"/>
+            <svg width="64" height="54" viewBox="0 0 72 60" fill="none">
               <defs>
-                <linearGradient id="cloudGrad" x1="35" y1="18" x2="35" y2="48" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#CBD5E1"/>
+                <radialGradient id="sunCore" cx="45%" cy="40%" r="55%">
+                  <stop offset="0%" stop-color="#FEF08A"/>
+                  <stop offset="65%" stop-color="#FACC15"/>
+                  <stop offset="100%" stop-color="#EAB308"/>
+                </radialGradient>
+                <linearGradient id="cloudBody" x1="38" y1="18" x2="38" y2="52" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#FFFFFF"/>
+                  <stop offset="68%" stop-color="#E0F2FE"/>
+                  <stop offset="100%" stop-color="#93C5FD"/>
                 </linearGradient>
               </defs>
+              <circle cx="27" cy="22" r="12.5" fill="url(#sunCore)"/>
+              <g stroke="#FACC15" stroke-width="2.6" stroke-linecap="round">
+                <line x1="27" y1="3.5" x2="27" y2="7.5"/>
+                <line x1="27" y1="36.5" x2="27" y2="40.5"/>
+                <line x1="8.5" y1="22" x2="12.5" y2="22"/>
+                <line x1="41.5" y1="22" x2="45.5" y2="22"/>
+                <line x1="13.8" y1="8.8" x2="16.8" y2="11.8"/>
+                <line x1="37.2" y1="32.2" x2="40.2" y2="35.2"/>
+                <line x1="40.2" y1="8.8" x2="37.2" y2="11.8"/>
+                <line x1="16.8" y1="32.2" x2="13.8" y2="35.2"/>
+              </g>
+              <path d="M21 51h31a11 11 0 0 0 1.5-21.9A14.8 14.8 0 0 0 25.2 23.5 10.5 10.5 0 0 0 21 51z" fill="url(#cloudBody)"/>
             </svg>
           </div>
           <div>
@@ -245,7 +244,7 @@
                 <path d="M8 0.5A5.8 5.8 0 0 0 2.2 6.3c0 4.3 5.8 11.2 5.8 11.2s5.8-6.9 5.8-11.2A5.8 5.8 0 0 0 8 0.5zm0 8a2.2 2.2 0 1 1 0-4.4 2.2 2.2 0 0 1 0 4.4z"/>
               </svg>
             </span>
-            <span class="loc-text" id="locationText">Đang định vị...</span>
+            <span class="loc-text" id="locationText">Hà Nội</span>
           </div>
           <div class="meta-row">
             <span class="meta-icon">
@@ -254,7 +253,7 @@
                 <line x1="5.5" y1="1.5" x2="5.5" y2="4"/><line x1="10.5" y1="1.5" x2="10.5" y2="4"/>
               </svg>
             </span>
-            <span id="dateText">Th 7, 21/11/2026</span>
+            <span id="dateText">Th 2, 20/11/2026</span>
           </div>
           <div class="meta-row">
             <span class="meta-icon">
@@ -271,7 +270,7 @@
             <circle cx="12" cy="12" r="9"></circle>
             <polyline points="12 7 12 12 15.5 14"></polyline>
           </svg>
-          <span id="clockText">10:34</span>
+          <span id="clockText">09:41</span>
         </div>
       </div>
 
@@ -293,12 +292,12 @@
     </div>
 
     <div id="tab-timer" class="tab-view">
-      <div class="page-title">Hẹn giờ & Lịch tự động</div>
+      <div class="page-title">Hẹn giờ & Lịch tự động (8 thiết bị)</div>
 
       <div class="panel-card">
-        <div class="panel-title">1. Hẹn giờ đếm ngược</div>
+        <div class="panel-title">1. Hẹn giờ đếm ngược BẬT / TẮT</div>
         <div class="field">
-          <label>Chọn thiết bị (Relay)</label>
+          <label>Chọn thiết bị (Đủ 8 kênh thiết bị)</label>
           <select class="input-ctrl" id="timerChannel" onchange="syncTimerCancelBtn()"></select>
         </div>
         <div class="field">
@@ -314,9 +313,14 @@
       </div>
 
       <div class="panel-card">
+        <div class="panel-title">Trạng thái hẹn giờ đếm ngược 8 thiết bị</div>
+        <div id="allTimersSummary"></div>
+      </div>
+
+      <div class="panel-card">
         <div class="panel-title">2. Lịch hẹn lặp theo ngày trong tuần</div>
         <div class="field">
-          <label>Chọn thiết bị</label>
+          <label>Chọn thiết bị (Đủ 8 kênh thiết bị)</label>
           <select class="input-ctrl" id="scheduleRelay"></select>
         </div>
         <div class="field">
@@ -387,14 +391,20 @@
       </div>
 
       <div class="panel-card">
-        <div class="panel-title">Đổi tên 6 kênh thiết bị</div>
+        <div class="panel-title">Đổi tên 8 kênh thiết bị</div>
         <div id="relayNameFields"></div>
         <button class="btn-primary" onclick="saveNames()">Lưu tên thiết bị</button>
         <div class="feedback" id="nameFeedback"></div>
       </div>
     </div>
 
-    <div id="tab-profile" class="tab-view"></div>
+    <div id="tab-profile" class="tab-view">
+      <div class="page-title">Thông tin hệ thống & Thiết bị</div>
+      <div class="panel-card">
+        <div class="panel-title">Tổng quan 8 kênh điều khiển</div>
+        <div id="profileDeviceList"></div>
+      </div>
+    </div>
   </div>
 
   <nav class="bottom-nav">
@@ -427,87 +437,155 @@
   </nav>
 
   <script>
-    const NUM_RELAYS = 6;
-    const FIREBASE_STATE_URL = "https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app/toansmarthome/state.json";
-    const FIREBASE_CMD_URL   = "https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app/toansmarthome/cmd.json";
-
-    const USER_LOCK_MS = 1800;
-    let relayLockUntil = [0, 0, 0, 0, 0, 0];
-    let pendingCmdQueue = [];
-    let isFlushingCmd = false;
-
+    const NUM_RELAYS = 8;
     let stateData = {
       wifiConnected: true,
       firebaseConnected: true,
-      mode: "Firebase Cloud",
-      ip: "192.168.1.x",
+      mode: 'WiFi STA',
+      ip: '192.168.1.100',
       lat: 21.0285,
       lon: 105.8542,
-      ssid: "May Tinh Toan Nga",
-      location: "Hà Nội",
-      dateStr: "Th 7, 21/11/2026",
-      clockHm: "12:23",
+      ssid: 'May Tinh Toan Nga',
+      location: 'Hà Nội',
+      dateStr: 'Th 2, 20/11/2026',
+      clockHm: '09:41',
       weatherTemp: 28,
       weatherHum: 72,
-      weatherDesc: "Có mây",
-      names: ["Biển LED", "Bóng điện 1", "Phòng Khách", "Quạt", "Phòng Ăn", "Bàn làm việc"],
-      relays: [false, false, false, false, false, false],
-      timers: [0, 0, 0, 0, 0, 0],
-      timerTargets: [false, false, false, false, false, false]
+      weatherDesc: 'Có mây',
+      names: [
+        'Biển LED', 'Bóng điện 1', 'Phòng Khách', 'Quạt',
+        'Phòng Ăn', 'Bàn làm việc', 'Máy bơm nước', 'Camera'
+      ],
+      relays: [true, true, false, true, true, true, false, true],
+      timers: [0, 0, 0, 0, 0, 0, 0, 0],
+      timerTargets: [false, false, false, false, false, false, false, false]
     };
-
+    let localSchedules = [];
     let anyDeviceOn = false;
     let settingsInitialized = false;
     let timerSelectInitialized = false;
     let isFetchingStatus = false;
 
-    function getDeviceSvgTemplate(idx) {
+    function getDeviceSvg(idx, isOn) {
       switch (idx) {
         case 0:
-          return `<svg width="68" height="48" viewBox="0 0 68 48" fill="none">
-            <defs><radialGradient id="ceilBeam" cx="50%" cy="20%" r="75%"><stop offset="0%" stop-color="#FFFBEB" stop-opacity="0.95"/><stop offset="55%" stop-color="#FDE047" stop-opacity="0.45"/><stop offset="100%" stop-color="#FDE047" stop-opacity="0"/></radialGradient></defs>
-            <ellipse class="fx-on" cx="34" cy="27" rx="28" ry="18" fill="url(#ceilBeam)"/>
-            <ellipse cx="34" cy="16" rx="23" ry="8.5" fill="#1F2028" stroke="#6B7280" stroke-width="1.4"/>
-            <ellipse class="ceil-fill" cx="34" cy="17.5" rx="18" ry="6"/>
+          return `<svg width="70" height="48" viewBox="0 0 72 50" fill="none">
+            <defs>
+              <radialGradient id="ceilLightGlow" cx="50%" cy="22%" r="72%">
+                <stop offset="0%" stop-color="#FFFBEB" stop-opacity="${isOn ? '0.95' : '0.12'}"/>
+                <stop offset="55%" stop-color="#FDE047" stop-opacity="${isOn ? '0.45' : '0'}"/>
+                <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="ceilRim" x1="12" y1="7" x2="60" y2="21" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#4B5563"/>
+                <stop offset="50%" stop-color="#1F2937"/>
+                <stop offset="100%" stop-color="#374151"/>
+              </linearGradient>
+            </defs>
+            ${isOn ? '<ellipse cx="36" cy="30" rx="31" ry="17" fill="url(#ceilLightGlow)"/>' : ''}
+            <ellipse cx="36" cy="14" rx="24.5" ry="9" fill="url(#ceilRim)" stroke="#9CA3AF" stroke-width="1.2"/>
+            <ellipse cx="36" cy="15.8" rx="19.5" ry="6.2" fill="${isOn ? '#FFFDF2' : '#4B5563'}"/>
           </svg>`;
+
         case 1:
-          return `<svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-            <defs><radialGradient id="bulbGlow" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/><stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/></radialGradient></defs>
-            <circle class="fx-on" cx="26" cy="21" r="21" fill="url(#bulbGlow)"/>
-            <path class="lamp-fill" d="M26 5C17.2 5 10 12.2 10 21c0 5.8 3.1 10.9 7.8 13.7 1.4.8 2.2 2.3 2.2 3.9V40h12v-1.4c0-1.6.8-3.1 2.2-3.9C38.9 31.9 42 26.8 42 21 42 12.2 34.8 5 26 5z"/>
-            <ellipse cx="21" cy="16" rx="3.4" ry="6.2" transform="rotate(-18 21 16)" fill="#FFFFFF" opacity="0.55"/>
-            <rect x="20.5" y="40" width="11" height="7" rx="2" fill="#9CA3AF"/>
+          return `<svg width="56" height="50" viewBox="0 0 56 50" fill="none">
+            <defs>
+              <radialGradient id="bulbAura" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#FEF9C3" stop-opacity="${isOn ? '0.85' : '0'}"/>
+                <stop offset="100%" stop-color="#FDE047" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="bulbGlass" x1="14" y1="4" x2="42" y2="36" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="${isOn ? '#FFFFFF' : '#6B7280'}"/>
+                <stop offset="65%" stop-color="${isOn ? '#F8FAFC' : '#4B5563'}"/>
+                <stop offset="100%" stop-color="${isOn ? '#E2E8F0' : '#374151'}"/>
+              </linearGradient>
+            </defs>
+            ${isOn ? '<circle cx="28" cy="20" r="21" fill="url(#bulbAura)"/>' : ''}
+            <path d="M28 3.5C18.5 3.5 11 11 11 20.5c0 6 3.2 11.3 8.1 14.2 1.4.8 2.2 2.4 2.2 4V40h13.4v-1.3c0-1.6.8-3.2 2.2-4C41.8 31.8 45 26.5 45 20.5 45 11 37.5 3.5 28 3.5z" fill="url(#bulbGlass)"/>
+            <ellipse cx="22.5" cy="15" rx="3.4" ry="6.6" transform="rotate(-18 22.5 15)" fill="#FFFFFF" opacity="${isOn ? '0.88' : '0.18'}"/>
+            <rect x="21.5" y="40" width="13" height="2.4" rx="1" fill="#9CA3AF"/>
+            <rect x="22" y="42.8" width="12" height="2.2" rx="1" fill="#6B7280"/>
+            <path d="M23.5 45.4h9l-1.5 2.4h-6l-1.5-2.4z" fill="#4B5563"/>
           </svg>`;
+
         case 2:
-          return `<svg width="68" height="48" viewBox="0 0 68 48" fill="none">
-            <path d="M13 13a5 5 0 0 1 5-5h32a5 5 0 0 1 5 5v12H13V13z" fill="#D1D5DB"/>
-            <line x1="34" y1="8" x2="34" y2="25" stroke="#9CA3AF" stroke-width="1.5"/>
-            <rect x="7" y="18" width="8.5" height="15" rx="3.5" fill="#E5E7EB"/><rect x="52.5" y="18" width="8.5" height="15" rx="3.5" fill="#E5E7EB"/>
-            <rect x="14" y="24" width="40" height="9" rx="3" fill="#F3F4F6"/>
-            <rect x="14" y="33" width="3.5" height="7" rx="1.2" fill="#D97706"/><rect x="50.5" y="33" width="3.5" height="7" rx="1.2" fill="#D97706"/>
+          return `<svg width="70" height="48" viewBox="0 0 72 50" fill="none">
+            <path d="M13 13a5.5 5.5 0 0 1 5.5-5.5h35A5.5 5.5 0 0 1 59 13v12H13V13z" fill="#E5E7EB" stroke="#CBD5E1" stroke-width="1"/>
+            <line x1="36" y1="7.5" x2="36" y2="25" stroke="#9CA3AF" stroke-width="1.6"/>
+            <rect x="6.5" y="17.5" width="9" height="15.5" rx="3.8" fill="#F3F4F6" stroke="#CBD5E1" stroke-width="1"/>
+            <rect x="56.5" y="17.5" width="9" height="15.5" rx="3.8" fill="#F3F4F6" stroke="#CBD5E1" stroke-width="1"/>
+            <rect x="14.5" y="23.5" width="43" height="9.5" rx="3.2" fill="#FFFFFF" stroke="#D1D5DB" stroke-width="1"/>
+            <rect x="14.5" y="33" width="3.8" height="7.5" rx="1.2" fill="#D97706"/>
+            <rect x="53.7" y="33" width="3.8" height="7.5" rx="1.2" fill="#D97706"/>
           </svg>`;
+
         case 3:
-          return `<svg width="54" height="54" viewBox="0 0 54 54" fill="none">
-            <circle class="fan-ring" cx="27" cy="21" r="16.5" stroke-width="1.8"/>
-            <path class="fan-b1" d="M27 21L22 9.5C25 8 29 8 32 9.5L27 21Z"/>
-            <path class="fan-b2" d="M27 21L38.5 25C38.5 28.5 36.4 31.5 33.4 33L27 21Z"/>
-            <path class="fan-b3" d="M27 21L15.5 25C15.5 28.5 17.6 31.5 20.6 33L27 21Z"/>
-            <circle cx="27" cy="21" r="3.6" fill="#F8FAFC"/>
-            <rect x="25" y="37.5" width="4" height="9" fill="#CBD5E1"/><ellipse cx="27" cy="47.5" rx="11" ry="3.2" fill="#E2E8F0"/>
+          return `<svg width="56" height="50" viewBox="0 0 56 50" fill="none">
+            <defs>
+              <radialGradient id="fanGlow" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#7DD3FC" stop-opacity="${isOn ? '0.55' : '0'}"/>
+                <stop offset="100%" stop-color="#0284C7" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            ${isOn ? '<circle cx="28" cy="19.5" r="20" fill="url(#fanGlow)"/>' : ''}
+            <circle cx="28" cy="19.5" r="16" stroke="${isOn ? '#E0F2FE' : '#9CA3AF'}" stroke-width="1.8" fill="rgba(186, 230, 253, ${isOn ? '0.2' : '0.06'})"/>
+            <path d="M28 19.5L23.2 8.5C26.2 7 29.8 7 32.8 8.5L28 19.5Z" fill="${isOn ? '#38BDF8' : '#64748B'}"/>
+            <path d="M28 19.5L39 23.8C39 27.2 37 30 34 31.4L28 19.5Z" fill="${isOn ? '#0284C7' : '#475569'}"/>
+            <path d="M28 19.5L17 23.8C17 27.2 19 30 22 31.4L28 19.5Z" fill="${isOn ? '#7DD3FC' : '#94A3B8'}"/>
+            <circle cx="28" cy="19.5" r="3.6" fill="#F8FAFC" stroke="#94A3B8" stroke-width="1"/>
+            <rect x="25.8" y="35.5" width="4.4" height="9" rx="1" fill="#E2E8F0"/>
+            <ellipse cx="28" cy="45" rx="11.5" ry="3.2" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="1"/>
           </svg>`;
+
         case 4:
-          return `<svg width="68" height="48" viewBox="0 0 68 48" fill="none">
-            <rect x="9" y="10" width="9" height="16" rx="2" fill="#D97706"/><rect x="50" y="10" width="9" height="16" rx="2" fill="#D97706"/>
-            <rect x="19" y="21" width="30" height="4" rx="1.5" fill="#FBBF24"/><rect x="32.2" y="25" width="3.6" height="15" fill="#D97706"/>
-            <rect x="10" y="25" width="2.6" height="15" fill="#B45309"/><rect x="16" y="25" width="2.6" height="15" fill="#B45309"/>
-            <rect x="50" y="25" width="2.6" height="15" fill="#B45309"/><rect x="56" y="25" width="2.6" height="15" fill="#B45309"/>
+          return `<svg width="70" height="48" viewBox="0 0 72 50" fill="none">
+            <rect x="8" y="8" width="9.5" height="16" rx="2.2" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+            <rect x="54.5" y="8" width="9.5" height="16" rx="2.2" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+            <rect x="19" y="19.5" width="34" height="4.5" rx="1.6" fill="#FBBF24" stroke="#B45309" stroke-width="1"/>
+            <rect x="34" y="24" width="4" height="16" fill="#D97706"/>
+            <rect x="9.5" y="24" width="2.8" height="16" fill="#B45309"/>
+            <rect x="15.2" y="24" width="2.8" height="16" fill="#B45309"/>
+            <rect x="54" y="24" width="2.8" height="16" fill="#B45309"/>
+            <rect x="59.7" y="24" width="2.8" height="16" fill="#B45309"/>
           </svg>`;
+
+        case 5:
+          return `<svg width="64" height="48" viewBox="0 0 64 50" fill="none">
+            <defs>
+              <linearGradient id="deskBeam" x1="36" y1="20" x2="42" y2="44" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FDE047" stop-opacity="${isOn ? '0.72' : '0.06'}"/>
+                <stop offset="100%" stop-color="#FACC15" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M35 19.5L51 43.5H27L35 19.5Z" fill="url(#deskBeam)"/>
+            <ellipse cx="23" cy="43.5" rx="12.5" ry="3.2" fill="#D97706" stroke="#F59E0B" stroke-width="1"/>
+            <path d="M23 42.5L32.5 24.5L21 12" stroke="#F59E0B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="32.5" cy="24.5" r="2" fill="#FDE68A"/>
+            <path d="M17 11L34.5 6.5L42.5 18L22.5 21.5L17 11Z" fill="#27272A" stroke="#9CA3AF" stroke-width="1.3"/>
+            <ellipse cx="35.5" cy="18.8" rx="6" ry="2.2" transform="rotate(-14 35.5 18.8)" fill="${isOn ? '#FEF9C3' : '#52525B'}"/>
+          </svg>`;
+
+        case 6:
+          return `<svg width="66" height="48" viewBox="0 0 66 50" fill="none">
+            <rect x="14" y="14.5" width="27" height="18.5" rx="4.2" fill="${isOn ? '#3B82F6' : '#2563EB'}" stroke="#93C5FD" stroke-width="1.2"/>
+            <line x1="19" y1="17.5" x2="19" y2="30" stroke="#BFDBFE" stroke-width="1.6"/>
+            <line x1="24.5" y1="17.5" x2="24.5" y2="30" stroke="#BFDBFE" stroke-width="1.6"/>
+            <line x1="30" y1="17.5" x2="30" y2="30" stroke="#BFDBFE" stroke-width="1.6"/>
+            <line x1="35.5" y1="17.5" x2="35.5" y2="30" stroke="#BFDBFE" stroke-width="1.6"/>
+            <rect x="23.5" y="9.5" width="8.5" height="5" rx="1.6" fill="#60A5FA" stroke="#DBEAFE" stroke-width="0.9"/>
+            <rect x="41" y="18.5" width="11.5" height="10.5" rx="2.2" fill="#1D4ED8" stroke="#93C5FD" stroke-width="1"/>
+            <rect x="11" y="33" width="33" height="3.6" rx="1.5" fill="#1E3A8A"/>
+            <rect x="15" y="36.6" width="4.2" height="4.2" fill="#1E40AF"/>
+            <rect x="35.8" y="36.6" width="4.2" height="4.2" fill="#1E40AF"/>
+          </svg>`;
+
         default:
-          return `<svg width="62" height="52" viewBox="0 0 62 52" fill="none">
-            <ellipse cx="24" cy="44" rx="12" ry="3.2" fill="#D97706"/>
-            <path d="M24 43L32 25L22 13" stroke="#F59E0B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M18 12L34 8L41 19L23 22L18 12Z" fill="#27272A" stroke="#71717A" stroke-width="1.4"/>
-            <path class="desk-beam" d="M33 20.5L47 42H27L33 20.5Z" fill="#FDE047"/>
+          return `<svg width="64" height="48" viewBox="0 0 64 50" fill="none">
+            <rect x="26" y="36" width="12" height="6.5" rx="2.2" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1"/>
+            <rect x="15" y="11.5" width="31" height="23" rx="10.5" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2"/>
+            <circle cx="30.5" cy="23" r="6.8" fill="#1E293B"/>
+            <circle cx="30.5" cy="23" r="3.2" fill="${isOn ? '#38BDF8' : '#0F172A'}"/>
+            <circle cx="28.3" cy="20.8" r="1.3" fill="#FFFFFF"/>
           </svg>`;
       }
     }
@@ -526,9 +604,12 @@
 
       if (tabName === 'timer') {
         populateTimerChannels();
+        renderAllTimersSummary();
         loadWeeklySchedules();
       } else if (tabName === 'settings') {
         populateSettingsFields();
+      } else if (tabName === 'profile') {
+        renderProfileDevices();
       }
     }
 
@@ -556,17 +637,16 @@
       }
     }
 
-    function buildRelayGridOnce() {
+    function buildRelayGridOnce(data) {
       const grid = document.getElementById('relayGrid');
       if (grid.children.length === NUM_RELAYS) return;
       grid.innerHTML = '';
       for (let idx = 0; idx < NUM_RELAYS; idx++) {
         const card = document.createElement('div');
         card.className = 'relay-card';
-        card.id = `rCard_${idx}`;
         card.innerHTML = `
           <div class="relay-top">
-            <div class="relay-icon-box" onclick="toggleRelay(${idx})">${getDeviceSvgTemplate(idx)}</div>
+            <div class="relay-icon-box" id="rIcon_${idx}" onclick="toggleRelay(${idx})"></div>
             <label class="switch">
               <input type="checkbox" id="rChk_${idx}" onchange="onSwitchChange(${idx}, this.checked)">
               <span class="slider"></span>
@@ -580,27 +660,16 @@
       }
     }
 
-    function updateMasterButtonUI() {
-      anyDeviceOn = stateData.relays.some(Boolean);
-      const txt = document.getElementById('masterBtnText');
-      if (txt) {
-        txt.innerText = anyDeviceOn ? 'Tắt tất cả thiết bị' : 'Bật tất cả thiết bị';
-      }
-    }
-
-    function applyRelayVisualInstant(idx, st) {
+    function updateRelayCardUI(idx, st) {
+      if (!stateData) return;
       stateData.relays[idx] = st;
-      const card = document.getElementById(`rCard_${idx}`);
       const chk = document.getElementById(`rChk_${idx}`);
+      const iconBox = document.getElementById(`rIcon_${idx}`);
       const titleEl = document.getElementById(`rTitle_${idx}`);
       const timerEl = document.getElementById(`rTimer_${idx}`);
-
-      if (card) card.classList.toggle('is-on', st);
-      if (chk && chk.checked !== st) chk.checked = st;
-      if (titleEl) {
-        const nextTitle = (stateData.names && stateData.names[idx]) || `Relay ${idx + 1}`;
-        if (titleEl.innerText !== nextTitle) titleEl.innerText = nextTitle;
-      }
+      if (chk) chk.checked = st;
+      if (iconBox) iconBox.innerHTML = getDeviceSvg(idx, st);
+      if (titleEl) titleEl.innerText = stateData.names[idx] || `Relay ${idx + 1}`;
 
       const rem = (stateData.timers && stateData.timers[idx]) || 0;
       const target = (stateData.timerTargets && stateData.timerTargets[idx]) ? 'BẬT' : 'TẮT';
@@ -613,12 +682,12 @@
         }
       }
 
-      updateMasterButtonUI();
+      anyDeviceOn = stateData.relays.some(Boolean);
+      document.getElementById('masterBtnText').innerText = anyDeviceOn ? 'Tắt tất cả thiết bị' : 'Bật tất cả thiết bị';
     }
 
     function renderHome(data) {
-      const online = Boolean(data.online !== undefined ? data.online : data.wifiConnected);
-      updateWifiIndicatorUI(online);
+      updateWifiIndicatorUI(data.wifiConnected);
 
       if (typeof data.weatherTemp === 'number') {
         document.getElementById('weatherTemp').innerText = `${Math.round(data.weatherTemp)}°C`;
@@ -640,103 +709,92 @@
         document.getElementById('clockText').innerText = data.clockHm;
       }
 
-      buildRelayGridOnce();
-      const now = Date.now();
-      const relays = Array.isArray(data.relays) ? data.relays : stateData.relays;
+      buildRelayGridOnce(data);
       for (let idx = 0; idx < NUM_RELAYS; idx++) {
-        if (now < relayLockUntil[idx]) continue;
-        applyRelayVisualInstant(idx, Boolean(relays[idx]));
+        updateRelayCardUI(idx, Boolean(data.relays[idx]));
       }
+      renderAllTimersSummary();
     }
 
-    async function flushCmdQueue() {
-      if (isFlushingCmd || pendingCmdQueue.length === 0) return;
-      isFlushingCmd = true;
-      while (pendingCmdQueue.length > 0) {
-        const cmdObj = pendingCmdQueue.shift();
-        try {
-          await fetch(FIREBASE_CMD_URL, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(cmdObj),
-            keepalive: true
-          });
-        } catch (e) {}
+    function renderAllTimersSummary() {
+      const box = document.getElementById('allTimersSummary');
+      if (!box || !stateData) return;
+      let html = '';
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        const name = stateData.names[i] || `Relay ${i + 1}`;
+        const rem = (stateData.timers && stateData.timers[i]) || 0;
+        const act = (stateData.timerTargets && stateData.timerTargets[i]) ? 'BẬT' : 'TẮT';
+        const statusText = rem > 0 ? `Còn ${rem} phút → ${act}` : 'Không hẹn giờ';
+        html += `<div class="device-status-row">
+          <span><b>Kênh ${i + 1}:</b> ${escapeHtml(name)}</span>
+          <span style="display:flex; align-items:center; gap:8px;">
+            <span class="${rem > 0 ? 'pill-on' : 'pill-off'}">${statusText}</span>
+            ${rem > 0 ? `<button type="button" class="btn-subtle" style="padding:4px 8px; font-size:11.5px;" onclick="cancelChannelTimer(${i})">Hủy</button>` : ''}
+          </span>
+        </div>`;
       }
-      isFlushingCmd = false;
+      box.innerHTML = html;
     }
 
-    function enqueueFirebaseCmd(cmdObj) {
-      pendingCmdQueue.push(cmdObj);
-      flushCmdQueue();
+    function renderProfileDevices() {
+      const box = document.getElementById('profileDeviceList');
+      if (!box || !stateData) return;
+      let html = '';
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        const name = stateData.names[i] || `Relay ${i + 1}`;
+        const isOn = Boolean(stateData.relays[i]);
+        html += `<div class="device-status-row">
+          <span><b>Kênh ${i + 1}:</b> ${escapeHtml(name)}</span>
+          <span class="${isOn ? 'pill-on' : 'pill-off'}">${isOn ? 'ĐANG BẬT' : 'ĐANG TẮT'}</span>
+        </div>`;
+      }
+      box.innerHTML = html;
     }
 
     async function refreshAll() {
-      if (isFetchingStatus || pendingCmdQueue.length > 0) return;
+      if (isFetchingStatus) return;
       isFetchingStatus = true;
       try {
-        const res = await fetch(FIREBASE_STATE_URL, { cache: 'no-store' });
-        const remote = await res.json();
-        if (remote && typeof remote === 'object') {
-          const now = Date.now();
-          const mergedRelays = stateData.relays.slice();
-          if (Array.isArray(remote.relays) && remote.relays.length === NUM_RELAYS) {
-            for (let i = 0; i < NUM_RELAYS; i++) {
-              if (now >= relayLockUntil[i]) {
-                mergedRelays[i] = Boolean(remote.relays[i]);
-              }
-            }
-          }
-          stateData = {
-            ...stateData,
-            ...remote,
-            wifiConnected: Boolean(remote.online),
-            firebaseConnected: true,
-            mode: "Firebase Realtime DB",
-            names: Array.isArray(remote.names) && remote.names.length === NUM_RELAYS ? remote.names : stateData.names,
-            relays: mergedRelays,
-            timers: Array.isArray(remote.timers) && remote.timers.length === NUM_RELAYS ? remote.timers : stateData.timers,
-            timerTargets: Array.isArray(remote.timerTargets) && remote.timerTargets.length === NUM_RELAYS ? remote.timerTargets : stateData.timerTargets
-          };
-        }
-      } catch (e) {
-        stateData.firebaseConnected = false;
-      } finally {
+        const res = await fetch('/api/status', { cache: 'no-store' });
+        const data = await res.json();
+        stateData = data;
         document.getElementById('netStatusBox').innerHTML =
-          `<b>Chế độ:</b> ${stateData.mode} &nbsp;|&nbsp; <b>IP ESP32:</b> ${stateData.ip || '-'}<br>` +
-          `<b>Firebase Cloud:</b> ${stateData.firebaseConnected ? 'Đã đồng bộ Internet' : 'Chưa kết nối / Đang chờ'}<br>` +
-          `<b>Tọa độ:</b> ${Number(stateData.lat || 0).toFixed(4)}, ${Number(stateData.lon || 0).toFixed(4)}<br>` +
-          `<b>WiFi:</b> ${stateData.ssid || '(đồng bộ qua Cloud)'}`;
-        renderHome(stateData);
+          `<b>Chế độ:</b> ${data.mode} &nbsp;|&nbsp; <b>IP:</b> ${data.ip}<br>` +
+          `<b>Firebase Cloud:</b> ${data.firebaseConnected ? 'Đã đồng bộ Internet' : 'Chưa kết nối'}<br>` +
+          `<b>Tọa độ:</b> ${Number(data.lat).toFixed(4)}, ${Number(data.lon).toFixed(4)}<br>` +
+          `<b>WiFi đã lưu:</b> ${data.ssid || '(chưa cài đặt)'}`;
+        renderHome(data);
         syncTimerCancelBtn();
+      } catch (e) {
+      } finally {
         isFetchingStatus = false;
       }
     }
 
     function onSwitchChange(idx, nextState) {
-      relayLockUntil[idx] = Date.now() + USER_LOCK_MS;
-      applyRelayVisualInstant(idx, nextState);
-      enqueueFirebaseCmd({ setCh: idx, setState: nextState });
+      updateRelayCardUI(idx, nextState);
+      fetch(`/api/set?ch=${idx}&state=${nextState ? 1 : 0}`, { cache: 'no-store' }).catch(() => {});
     }
 
     function toggleRelay(idx) {
+      if (!stateData) return;
       const nextState = !Boolean(stateData.relays[idx]);
-      relayLockUntil[idx] = Date.now() + USER_LOCK_MS;
-      applyRelayVisualInstant(idx, nextState);
-      enqueueFirebaseCmd({ setCh: idx, setState: nextState });
+      updateRelayCardUI(idx, nextState);
+      fetch(`/api/set?ch=${idx}&state=${nextState ? 1 : 0}`, { cache: 'no-store' }).catch(() => {});
     }
 
     function toggleAllDevices() {
       const nextState = anyDeviceOn ? 0 : 1;
-      const lockUntil = Date.now() + USER_LOCK_MS;
-      for (let i = 0; i < NUM_RELAYS; i++) {
-        relayLockUntil[i] = lockUntil;
-        applyRelayVisualInstant(i, nextState === 1);
+      if (stateData) {
+        for (let i = 0; i < NUM_RELAYS; i++) {
+          updateRelayCardUI(i, nextState === 1);
+        }
       }
-      enqueueFirebaseCmd({ all: nextState });
+      fetch(`/api/all?state=${nextState}`, { cache: 'no-store' }).catch(() => {});
     }
 
     function populateTimerChannels() {
+      if (!stateData) return;
       const sel1 = document.getElementById('timerChannel');
       const sel2 = document.getElementById('scheduleRelay');
       const prev1 = sel1.value;
@@ -758,7 +816,7 @@
 
     function syncTimerCancelBtn() {
       const sel = document.getElementById('timerChannel');
-      if (!sel) return;
+      if (!sel || !stateData) return;
       const idx = parseInt(sel.value || '0', 10);
       const rem = (stateData.timers && stateData.timers[idx]) || 0;
       const btn = document.getElementById('cancelTimerBtn');
@@ -777,32 +835,106 @@
         document.getElementById('timerFeedback').innerText = 'Vui lòng nhập số phút >= 1';
         return;
       }
-      enqueueFirebaseCmd({ timerCh: idx, timerMin: mins, timerTarget: target === 1 });
-      document.getElementById('timerFeedback').innerText = `Đã gửi hẹn giờ ${mins} phút cho Relay ${idx + 1}!`;
-      setTimeout(refreshAll, 600);
+      stateData.timers[idx] = mins;
+      stateData.timerTargets[idx] = target === 1;
+      renderHome(stateData);
+      syncTimerCancelBtn();
+      try {
+        await fetch(`/api/timer?ch=${idx}&min=${mins}&target=${target}`, { cache: 'no-store' });
+        refreshAll();
+      } catch (e) {}
+      document.getElementById('timerFeedback').innerText =
+        `Đã đặt hẹn giờ ${target === 1 ? 'BẬT' : 'TẮT'} sau ${mins} phút cho Relay ${idx + 1}!`;
+    }
+
+    async function cancelChannelTimer(idx) {
+      stateData.timers[idx] = 0;
+      stateData.timerTargets[idx] = false;
+      renderHome(stateData);
+      syncTimerCancelBtn();
+      try {
+        await fetch(`/api/timer?ch=${idx}&min=0&target=0`, { cache: 'no-store' });
+        refreshAll();
+      } catch (e) {}
+      document.getElementById('timerFeedback').innerText = `Đã hủy hẹn giờ cho Relay ${idx + 1}.`;
     }
 
     async function cancelTimer() {
       const idx = parseInt(document.getElementById('timerChannel').value, 10);
-      enqueueFirebaseCmd({ timerCh: idx, timerMin: 0, timerTarget: false });
-      document.getElementById('timerFeedback').innerText = 'Đã hủy hẹn giờ.';
-      setTimeout(refreshAll, 600);
+      await cancelChannelTimer(idx);
+    }
+
+    function renderWeeklyScheduleItems(arr) {
+      const box = document.getElementById('weeklyScheduleList');
+      const days = ['CN','T2','T3','T4','T5','T6','T7'];
+      const active = arr.filter(s => s.enabled);
+      if (!active.length) {
+        box.innerHTML = '<div class="info-box" style="margin:0;">Chưa có lịch hẹn lặp lại nào.</div>';
+        return;
+      }
+      box.innerHTML = active.map(s => {
+        const dayText = days.filter((d,i) => s.days & (1 << i)).join(', ');
+        const nm = (stateData && stateData.names[s.relay]) || `Relay ${s.relay + 1}`;
+        return `<div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <b>${escapeHtml(nm)}</b> • ${String(s.hour).padStart(2,'0')}:${String(s.minute).padStart(2,'0')} (${s.on ? 'BẬT' : 'TẮT'})<br>
+            <span style="color:#818cf8;">${dayText}</span>
+          </div>
+          <button class="btn-subtle" onclick="deleteWeeklySchedule(${s.id})">Xóa</button>
+        </div>`;
+      }).join('');
     }
 
     async function loadWeeklySchedules() {
-      document.getElementById('weeklyScheduleList').innerHTML =
-        '<div class="info-box" style="margin:0;">Lịch hẹn tuần lưu trên bộ nhớ Flash của ESP32 (hỗ trợ tối đa 12 lịch tự động theo giờ NTP).</div>';
+      try {
+        const res = await fetch('/api/schedules', { cache: 'no-store' });
+        localSchedules = await res.json();
+      } catch (e) {}
+      renderWeeklyScheduleItems(localSchedules);
     }
 
-    async function saveWeeklySchedule() {
-      document.getElementById('scheduleFeedback').innerText = 'Vui lòng cấu hình lịch lặp trực tiếp trên giao diện cục bộ của ESP32.';
+    async function saveWeeklySchedule(target) {
+      const days = [...document.querySelectorAll('.schedule-day:checked')].reduce((m,el) => m | (1 << Number(el.value)), 0);
+      const relay = Number(document.getElementById('scheduleRelay').value);
+      const hour = Number(document.getElementById('scheduleHour').value);
+      const minute = Number(document.getElementById('scheduleMinute').value);
+      if (!days) {
+        document.getElementById('scheduleFeedback').innerText = 'Hãy chọn ít nhất 1 ngày trong tuần.';
+        return;
+      }
+      localSchedules.push({
+        id: Date.now(),
+        enabled: true,
+        relay: relay,
+        days: days,
+        hour: hour,
+        minute: minute,
+        on: target === 1
+      });
+      renderWeeklyScheduleItems(localSchedules);
+
+      try {
+        const q = `relay=${relay}&days=${days}&hour=${hour}&minute=${minute}&target=${target}`;
+        const res = await fetch('/api/schedule/save?' + q, { cache: 'no-store' });
+        const d = await res.json();
+        document.getElementById('scheduleFeedback').innerText = d.message || 'Đã lưu lịch hẹn.';
+        loadWeeklySchedules();
+      } catch (e) {
+        document.getElementById('scheduleFeedback').innerText = 'Đã lưu lịch hẹn trên giao diện.';
+      }
     }
 
-    async function deleteWeeklySchedule() {
-      loadWeeklySchedules();
+    async function deleteWeeklySchedule(id) {
+      localSchedules = localSchedules.filter(s => s.id !== id);
+      renderWeeklyScheduleItems(localSchedules);
+      try {
+        await fetch('/api/schedule/delete?id=' + id, { cache: 'no-store' });
+        loadWeeklySchedules();
+      } catch (e) {}
     }
 
     function populateSettingsFields() {
+      if (!stateData) return;
       if (!settingsInitialized) {
         document.getElementById('ssidField').value = stateData.ssid || '';
         document.getElementById('locationField').value = stateData.location || '';
@@ -823,40 +955,88 @@
     }
 
     async function scanWiFi() {
-      document.getElementById('wifiFeedback').innerText = 'Quét WiFi khả dụng khi mở trang trực tiếp từ IP của ESP32.';
+      const fb = document.getElementById('wifiFeedback');
+      const sel = document.getElementById('wifiList');
+      fb.innerText = 'Đang quét mạng WiFi xung quanh...';
+      try {
+        const res = await fetch('/api/scan');
+        const list = await res.json();
+        sel.innerHTML = '<option value="">-- Chọn WiFi tìm thấy --</option>';
+        list.forEach(net => {
+          if (!net.ssid) return;
+          sel.add(new Option(`${net.ssid} (${net.rssi} dBm)${net.enc ? ' 🔒' : ''}`, net.ssid));
+        });
+        sel.style.display = 'block';
+        fb.innerText = list.length ? `Tìm thấy ${list.length} mạng WiFi.` : 'Không tìm thấy mạng WiFi nào.';
+      } catch (e) {
+        fb.innerText = 'Lỗi khi quét WiFi.';
+      }
     }
 
     async function saveWiFi() {
-      document.getElementById('wifiFeedback').innerText = 'Đổi WiFi cho ESP32 thực hiện qua trang IP nội bộ của thiết bị.';
+      const ssid = document.getElementById('ssidField').value.trim();
+      const pass = document.getElementById('passField').value;
+      if (!ssid) {
+        document.getElementById('wifiFeedback').innerText = 'Vui lòng nhập tên WiFi!';
+        return;
+      }
+      document.getElementById('wifiFeedback').innerText = 'Đang lưu và kết nối WiFi mới...';
+      try {
+        const res = await fetch('/api/wifi', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(pass)}`
+        });
+        const d = await res.json();
+        document.getElementById('wifiFeedback').innerText = d.message;
+      } catch (e) {
+        document.getElementById('wifiFeedback').innerText = 'Đã gửi lệnh đổi WiFi. Hãy kết nối điện thoại sang WiFi mới!';
+      }
     }
 
-    async function saveLocation() {
-      document.getElementById('locFeedback').innerText = 'Cập nhật vị trí thực hiện qua trang IP nội bộ của ESP32.';
+    async function saveLocation(autoDetect) {
+      const loc = autoDetect ? '' : document.getElementById('locationField').value;
+      document.getElementById('locFeedback').innerText = autoDetect ? 'Đang định vị theo điểm bắt WiFi...' : 'Đang lưu vị trí...';
+      try {
+        const res = await fetch('/api/location', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `loc=${encodeURIComponent(loc)}`
+        });
+        const d = await res.json();
+        document.getElementById('locFeedback').innerText = d.message;
+        settingsInitialized = false;
+        refreshAll();
+      } catch (e) {}
     }
 
     async function saveNames() {
-      const names = [];
+      const params = [];
       for (let i = 0; i < NUM_RELAYS; i++) {
-        const v = document.getElementById(`rName_${i}`).value.trim() || `Thiết bị ${i + 1}`;
-        names.push(v);
-      }
-      stateData.names = names;
-      try {
-        await fetch("https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app/toansmarthome/state/names.json", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(names)
-        });
-        document.getElementById('nameFeedback').innerText = 'Đã cập nhật tên thiết bị lên Firebase!';
-      } catch (e) {
-        document.getElementById('nameFeedback').innerText = 'Đã lưu tạm trên giao diện.';
+        const val = document.getElementById(`rName_${i}`).value.trim() || `Relay ${i + 1}`;
+        stateData.names[i] = val;
+        params.push(`n${i}=${encodeURIComponent(val)}`);
       }
       renderHome(stateData);
+      try {
+        const res = await fetch('/api/names', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.join('&')
+        });
+        const d = await res.json();
+        document.getElementById('nameFeedback').innerText = d.message;
+        refreshAll();
+      } catch (e) {
+        document.getElementById('nameFeedback').innerText = 'Đã cập nhật tên 8 thiết bị.';
+      }
     }
 
     renderHome(stateData);
+    populateTimerChannels();
+    renderWeeklyScheduleItems(localSchedules);
     refreshAll();
-    setInterval(refreshAll, 1000);
+    setInterval(refreshAll, 500);
   </script>
 </body>
 </html>
