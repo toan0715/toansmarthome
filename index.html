@@ -3,67 +3,382 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Toan Smart Home - Cloud</title>
+  <title>Toan Smart Home</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background-color: #08070d;
+      background-color: #07060c;
       background-image:
-        radial-gradient(circle at 75% 18%, rgba(112, 82, 224, 0.28) 0%, rgba(18, 15, 32, 0) 48%),
-        radial-gradient(circle at 20% 78%, rgba(88, 66, 185, 0.14) 0%, rgba(8, 7, 13, 0) 50%);
+        radial-gradient(circle at 78% 12%, rgba(112, 76, 232, 0.34) 0%, rgba(18, 14, 34, 0) 50%),
+        radial-gradient(circle at 22% 72%, rgba(78, 56, 178, 0.16) 0%, rgba(7, 6, 12, 0) 52%);
       color: #ffffff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding-bottom: 36px;
+      padding-bottom: 92px;
     }
-    .app { width: 100%; max-width: 440px; padding: 18px; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .header h1 { font-size: 24px; font-weight: 700; }
-    .status-pill {
-      font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px;
-      background: rgba(34, 197, 94, 0.16); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.35);
+    .app { width: 100%; max-width: 440px; padding: 18px 16px 14px; }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 0 2px;
     }
-    .status-pill.offline {
-      background: rgba(251, 191, 36, 0.16); color: #fbbf24; border-color: rgba(251, 191, 36, 0.35);
+    .header h1 { font-size: 27px; font-weight: 700; letter-spacing: -0.4px; }
+    .wifi-indicator { display: flex; align-items: center; gap: 8px; }
+    .wifi-led-svg { width: 42px; height: 42px; flex-shrink: 0; }
+    .wifi-led-label {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #26e841;
+      text-align: center;
     }
-    .relay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
+    .wifi-indicator.offline .wifi-led-label { color: #fbbf24; }
+    @keyframes pulseLed {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.92); }
+    }
+    .wifi-indicator.offline .wifi-led-svg { animation: pulseLed 1.2s infinite ease-in-out; }
+
+    /* Weather Hero */
+    .weather-hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 0 2px;
+    }
+    .weather-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .weather-icon-wrap { width: 66px; height: 54px; display: flex; align-items: center; justify-content: center; }
+    .weather-temp { font-size: 38px; font-weight: 600; line-height: 1.04; letter-spacing: -1px; }
+    .weather-cond { font-size: 15.5px; color: #dcdce6; margin-top: 3px; }
+    .weather-divider { width: 1px; height: 60px; background: rgba(255, 255, 255, 0.24); flex-shrink: 0; margin: 0 2px; }
+    .weather-meta { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: #e6e6f0; min-width: 0; flex: 1; }
+    .meta-row { display: flex; align-items: center; gap: 6px; line-height: 1.25; }
+    .meta-icon { width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .loc-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px; }
+    .clock-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #f4f4fa;
+      flex-shrink: 0;
+    }
+
+    /* Relay Grid */
+    .relay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; margin-bottom: 18px; }
     .relay-card {
-      background: linear-gradient(155deg, rgba(36, 35, 44, 0.92) 0%, rgba(23, 22, 29, 0.96) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 22px;
-      padding: 16px; display: flex; flex-direction: column; justify-content: space-between; min-height: 112px;
+      background: linear-gradient(155deg, rgba(35, 34, 43, 0.94) 0%, rgba(21, 20, 27, 0.98) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 22px;
+      padding: 13px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 118px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
-    .relay-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .state-label { font-size: 12px; font-weight: 600; color: #9e9eb0; }
-    .state-label.on { color: #818cf8; }
-    .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+    .relay-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .relay-icon-box { width: 74px; height: 54px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
+
+    .switch { position: relative; display: inline-block; width: 52px; height: 29px; flex-shrink: 0; margin-top: 2px; }
     .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #36363f; transition: 0.25s; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #fff; transition: 0.25s; border-radius: 50%; }
-    input:checked + .slider { background-color: #5b5ce6; }
-    input:checked + .slider:before { transform: translateX(22px); }
-    .relay-title { font-size: 15.5px; font-weight: 500; color: #f3f3f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .master-btn {
-      width: 100%; background: linear-gradient(90deg, #4b4ce0 0%, #6162f0 100%);
-      border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px;
-      padding: 14px 20px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #383842; transition: 0.25s; border-radius: 34px; }
+    .slider:before {
+      position: absolute; content: ""; height: 23px; width: 23px; left: 3px; bottom: 3px;
+      background-color: #ffffff; transition: 0.25s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.45);
     }
-    .hint { margin-top: 14px; font-size: 12px; color: #9e9eb0; text-align: center; line-height: 1.5; }
+    input:checked + .slider { background-color: #5557e8; }
+    input:checked + .slider:before { transform: translateX(23px); }
+
+    .relay-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .relay-title { font-size: 16px; font-weight: 500; color: #f4f4f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Master Button */
+    .master-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #4748dc 0%, #6364f5 50%, #4d4ee3 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      padding: 15px 22px;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: 0 8px 26px rgba(86, 87, 235, 0.42);
+    }
+    .master-btn-center { display: flex; align-items: center; gap: 11px; }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 440px;
+      height: 78px;
+      background: linear-gradient(180deg, #272631 0%, #191821 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 4px 10px 8px;
+      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.55);
+      z-index: 50;
+    }
+    .nav-btn {
+      background: none; border: none; color: #a2a2b6; font-size: 12px; font-weight: 500;
+      display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 6px 10px;
+    }
+    .nav-btn.active { color: #858cf8; }
+    .nav-btn.active::after { content: ""; width: 32px; height: 3px; background: #858cf8; border-radius: 3px; margin-top: 1px; }
+
+    /* Tabs */
+    .tab-view { display: none; }
+    .tab-view.active { display: block; }
+    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
+    .panel-card {
+      background: rgba(29, 28, 37, 0.95); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 22px; padding: 16px; margin-bottom: 14px;
+    }
+    .panel-title { font-size: 15.5px; font-weight: 600; color: #e4e6f2; margin-bottom: 12px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12.5px; color: #a0a0b4; margin-bottom: 6px; }
+    .input-ctrl {
+      width: 100%; background: #121118; border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px; padding: 11px 12px; color: #ffffff; font-size: 14px; outline: none;
+    }
+    .input-ctrl:focus { border-color: #6366f1; }
+    .row-2 { display: flex; gap: 10px; }
+    .btn-primary {
+      width: 100%; background: #5b5ce6; color: #fff; border: none;
+      border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn-on { flex: 1; background: #22c55e; color: #05200e; border: none; border-radius: 12px; padding: 11px; font-weight: 600; cursor: pointer; }
+    .btn-off { flex: 1; background: #ef4444; color: #fff; border: none; border-radius: 12px; padding: 11px; font-weight: 600; cursor: pointer; }
+    .btn-subtle {
+      background: #2b2a36; color: #e4e4ec; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 7px 12px; font-size: 12.5px; cursor: pointer;
+    }
+    .info-box {
+      background: #13121a; border-radius: 12px; padding: 12px;
+      font-size: 12.5px; color: #bcbcd0; line-height: 1.6; margin-bottom: 12px;
+    }
+    .feedback { font-size: 13px; color: #4ade80; margin-top: 8px; text-align: center; min-height: 18px; }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="header">
-      <h1>Toan Smart Home</h1>
-      <div class="status-pill offline" id="cloudStatus">Đang kết nối...</div>
+    <!-- TAB TRANG CHỦ -->
+    <div id="tab-home" class="tab-view active">
+      <div class="header">
+        <h1>Toan Smart Home</h1>
+        <div class="wifi-indicator" id="cloudIndicator">
+          <svg class="wifi-led-svg" id="ledSvg" viewBox="0 0 44 44" fill="none">
+            <defs>
+              <radialGradient id="ledGlowGreen" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#4ADE80" stop-opacity="0.95"/>
+                <stop offset="55%" stop-color="#22C55E" stop-opacity="0.38"/>
+                <stop offset="100%" stop-color="#22C55E" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="ledGlowWarn" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FACC15" stop-opacity="0.95"/>
+                <stop offset="55%" stop-color="#F59E0B" stop-opacity="0.38"/>
+                <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle id="ledHalo" cx="22" cy="22" r="21" fill="url(#ledGlowGreen)"/>
+            <g id="ledRays" stroke="#26E841" stroke-width="2" stroke-linecap="round">
+              <line x1="22" y1="2.5" x2="22" y2="6.8"/><line x1="22" y1="37.2" x2="22" y2="41.5"/>
+              <line x1="2.5" y1="22" x2="6.8" y2="22"/><line x1="37.2" y1="22" x2="41.5" y2="22"/>
+              <line x1="8.2" y1="8.2" x2="11.4" y2="11.4"/><line x1="32.6" y1="32.6" x2="35.8" y2="35.8"/>
+              <line x1="35.8" y1="8.2" x2="32.6" y2="11.4"/><line x1="11.4" y1="32.6" x2="8.2" y2="35.8"/>
+            </g>
+            <circle id="ledRing" cx="22" cy="22" r="11" fill="#16A34A" stroke="#86EFAC" stroke-width="1.5"/>
+            <circle cx="22" cy="22" r="4.8" fill="#FFFFFF"/>
+          </svg>
+          <div class="wifi-led-label" id="cloudLedText">Kết nối<br>WiFi</div>
+        </div>
+      </div>
+
+      <div class="weather-hero">
+        <div class="weather-left">
+          <div class="weather-icon-wrap">
+            <svg width="64" height="54" viewBox="0 0 68 56" fill="none">
+              <circle cx="25" cy="21" r="12" fill="#FACC15"/>
+              <g stroke="#FACC15" stroke-width="2.5" stroke-linecap="round">
+                <line x1="25" y1="3.5" x2="25" y2="7"/><line x1="25" y1="35" x2="25" y2="38.5"/>
+                <line x1="7.5" y1="21" x2="11" y2="21"/><line x1="39" y1="21" x2="42.5" y2="21"/>
+                <line x1="12.6" y1="8.6" x2="15.2" y2="11.2"/><line x1="34.8" y1="30.8" x2="37.4" y2="33.4"/>
+                <line x1="37.4" y1="8.6" x2="34.8" y2="11.2"/><line x1="15.2" y1="30.8" x2="12.6" y2="33.4"/>
+              </g>
+              <path d="M21 48.5h29.5a10.5 10.5 0 0 0 1.4-20.9A13.8 13.8 0 0 0 25 22.5a10 10 0 0 0-4 26z" fill="url(#cloudGrad)"/>
+              <defs>
+                <linearGradient id="cloudGrad" x1="35" y1="18" x2="35" y2="49" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#FFFFFF"/><stop offset="100%" stop-color="#CBD5E1"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div>
+            <div class="weather-temp" id="weatherTemp">28°C</div>
+            <div class="weather-cond" id="weatherCond">Có mây</div>
+          </div>
+        </div>
+
+        <div class="weather-divider"></div>
+
+        <div class="weather-meta">
+          <div class="meta-row">
+            <span class="meta-icon">
+              <svg width="13" height="15" viewBox="0 0 16 18" fill="#E6E6F0">
+                <path d="M8 0.5A5.8 5.8 0 0 0 2.2 6.3c0 4.3 5.8 11.2 5.8 11.2s5.8-6.9 5.8-11.2A5.8 5.8 0 0 0 8 0.5zm0 8a2.2 2.2 0 1 1 0-4.4 2.2 2.2 0 0 1 0 4.4z"/>
+              </svg>
+            </span>
+            <span class="loc-text" id="locationText">Hà Nội</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-icon">
+              <svg width="13" height="14" viewBox="0 0 16 16" fill="none" stroke="#E6E6F0" stroke-width="1.5">
+                <rect x="2" y="3" width="12" height="11" rx="2"/><line x1="2" y1="6.5" x2="14" y2="6.5"/>
+                <line x1="5.5" y1="1.5" x2="5.5" y2="4"/><line x1="10.5" y1="1.5" x2="10.5" y2="4"/>
+              </svg>
+            </span>
+            <span id="dateText">Th 2, 23/11/2026</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-icon">
+              <svg width="12" height="15" viewBox="0 0 14 18" fill="#E6E6F0">
+                <path d="M7 1C7 1 1.5 7.8 1.5 12a5.5 5.5 0 0 0 11 0C12.5 7.8 7 1 7 1z"/>
+              </svg>
+            </span>
+            <span id="outdoorHumText">Độ ẩm: 72%</span>
+          </div>
+        </div>
+
+        <div class="clock-box">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#E6E6F0" stroke-width="2">
+            <circle cx="12" cy="12" r="9.2"></circle>
+            <polyline points="12 7.2 12 12 15.5 14"></polyline>
+          </svg>
+          <span id="clockText">09:41</span>
+        </div>
+      </div>
+
+      <div class="relay-grid" id="relayGrid"></div>
+
+      <button class="master-btn" id="masterBtn" onclick="toggleAllDevices()">
+        <span style="width:18px;"></span>
+        <span class="master-btn-center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+            <line x1="12" y1="2" x2="12" y2="12"></line>
+          </svg>
+          <span id="masterBtnText">Tắt tất cả thiết bị</span>
+        </span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
     </div>
 
-    <div class="relay-grid" id="relayGrid"></div>
+    <!-- TAB HẸN GIỜ (ĐẾM NGƯỢC QUA CLOUD) -->
+    <div id="tab-timer" class="tab-view">
+      <div class="page-title">Hẹn giờ tự động</div>
+      <div class="panel-card">
+        <div class="panel-title">Hẹn giờ đếm ngược cho Relay</div>
+        <div class="field">
+          <label>Chọn thiết bị</label>
+          <select class="input-ctrl" id="timerChannel"></select>
+        </div>
+        <div class="field">
+          <label>Thời gian đếm ngược (phút)</label>
+          <input type="number" class="input-ctrl" id="timerMinutes" min="1" max="1440" placeholder="Ví dụ: 5, 15, 30, 60...">
+        </div>
+        <div class="row-2">
+          <button class="btn-on" onclick="startCloudTimer(true)">Hẹn giờ BẬT</button>
+          <button class="btn-off" onclick="startCloudTimer(false)">Hẹn giờ TẮT</button>
+        </div>
+        <div class="feedback" id="timerFeedback"></div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-title">Hẹn giờ đang chạy</div>
+        <div id="activeTimerList"><div class="info-box" style="margin:0;">Chưa có hẹn giờ nào đang chạy.</div></div>
+      </div>
+    </div>
 
-    <button class="master-btn" id="masterBtn" onclick="toggleAll()">Tắt tất cả thiết bị</button>
-    <div class="hint" id="hintText">Project: toan-smarthome-7ca3e • Điều khiển qua Internet</div>
+    <!-- TAB CÀI ĐẶT -->
+    <div id="tab-settings" class="tab-view">
+      <div class="page-title">Cài đặt thiết bị</div>
+      <div class="info-box" id="cloudInfoBox">
+        <b>Firebase Project:</b> toan-smarthome-7ca3e<br>
+        <b>Region:</b> asia-southeast1
+      </div>
+      <div class="panel-card">
+        <div class="panel-title">Đổi tên 8 kênh thiết bị</div>
+        <div id="relayNameFields"></div>
+        <button class="btn-primary" onclick="saveNamesToFirebase()">Lưu tên thiết bị</button>
+        <div class="feedback" id="nameFeedback"></div>
+      </div>
+    </div>
+
+    <!-- TAB CÁ NHÂN -->
+    <div id="tab-profile" class="tab-view">
+      <div class="page-title">Thông tin hệ thống</div>
+      <div class="panel-card">
+        <div class="panel-title">Toan Smart Home Cloud</div>
+        <div class="info-box" style="margin:0;">
+          <b>Giao diện web:</b> GitHub Pages (toansmarthome)<br>
+          <b>Cơ sở dữ liệu:</b> Firebase Realtime Database<br>
+          <b>Số kênh điều khiển:</b> 8 Relay độc lập + Điều khiển tổng
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('home', this)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1v-9.5z"></path>
+      </svg>
+      <span>Trang chủ</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('timer', this)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="17" rx="2.5"></rect>
+        <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+      </svg>
+      <span>Hẹn giờ</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('settings', this)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      <span>Cài đặt</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('profile', this)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"></path>
+      </svg>
+      <span>Cá nhân</span>
+    </button>
+  </nav>
 
   <script>
     const FIREBASE_DB_URL = "https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app";
@@ -71,13 +386,108 @@
     const NUM_RELAYS = 8;
 
     const DEFAULT_NAMES = [
-      "Biển LED", "Bóng điện 1", "Phòng Khách", "Quạt",
-      "Phòng Ăn", "Bàn làm việc", "Máy bơm nước", "Camera"
+      "Biển LED", "Bóng điện 1",
+      "Phòng Khách", "Quạt",
+      "Phòng Ăn", "Bàn làm việc",
+      "Máy bơm nước", "Camera"
     ];
 
     let relays = Array(NUM_RELAYS).fill(false);
     let names = [...DEFAULT_NAMES];
+    let cloudTimers = Array(NUM_RELAYS).fill(null); // { endAt: ms, target: bool }
     let isUpdating = false;
+    let settingsBuilt = false;
+
+    function getDeviceSvg(idx, isOn) {
+      switch (idx) {
+        case 0: // Biển LED / Đèn trần
+          return `<svg width="72" height="50" viewBox="0 0 72 50" fill="none">
+            <defs>
+              <radialGradient id="ceilBeam" cx="50%" cy="22%" r="75%">
+                <stop offset="0%" stop-color="#FFFBEB" stop-opacity="${isOn ? '0.95' : '0.18'}"/>
+                <stop offset="55%" stop-color="#FDE047" stop-opacity="${isOn ? '0.52' : '0'}"/>
+                <stop offset="100%" stop-color="#FDE047" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            ${isOn ? '<ellipse cx="36" cy="29" rx="30" ry="18" fill="url(#ceilBeam)"/>' : ''}
+            <ellipse cx="36" cy="16" rx="24" ry="8.5" fill="#1E1F27" stroke="#71717A" stroke-width="1.4"/>
+            <ellipse cx="36" cy="17.8" rx="19" ry="6.2" fill="${isOn ? '#FFFDF2' : '#4E5360'}"/>
+          </svg>`;
+        case 1: // Bóng điện 1
+          return `<svg width="54" height="54" viewBox="0 0 54 54" fill="none">
+            <defs>
+              <radialGradient id="bulbGlow" cx="50%" cy="42%" r="55%">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="${isOn ? '0.92' : '0'}"/>
+                <stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            ${isOn ? '<circle cx="27" cy="22" r="22" fill="url(#bulbGlow)"/>' : ''}
+            <path d="M27 5C18 5 10.5 12.5 10.5 21.5c0 6 3.2 11.2 8 14.1 1.4.8 2.2 2.3 2.2 4v1.4h12.6v-1.4c0-1.7.8-3.2 2.2-4 4.8-2.9 8-8.1 8-14.1C43.5 12.5 36 5 27 5z" fill="${isOn ? '#F8FAFC' : '#555A68'}"/>
+            <ellipse cx="21.5" cy="16.5" rx="3.5" ry="6.4" transform="rotate(-18 21.5 16.5)" fill="#FFFFFF" opacity="${isOn ? '0.88' : '0.2'}"/>
+            <rect x="21" y="41" width="12" height="7.5" rx="2" fill="#9CA3AF"/>
+          </svg>`;
+        case 2: // Phòng Khách (Sofa)
+          return `<svg width="72" height="50" viewBox="0 0 72 50" fill="none">
+            <path d="M14 13a5.5 5.5 0 0 1 5.5-5.5h33A5.5 5.5 0 0 1 58 13v12.5H14V13z" fill="#D4D4D8"/>
+            <line x1="36" y1="7.5" x2="36" y2="25.5" stroke="#A1A1AA" stroke-width="1.5"/>
+            <rect x="7.5" y="18.5" width="9" height="15.5" rx="3.8" fill="#E4E4E7"/>
+            <rect x="55.5" y="18.5" width="9" height="15.5" rx="3.8" fill="#E4E4E7"/>
+            <rect x="15" y="24.5" width="42" height="9.5" rx="3" fill="#F4F4F5"/>
+            <rect x="15" y="34" width="3.8" height="7.5" rx="1.2" fill="#D97706"/>
+            <rect x="53.2" y="34" width="3.8" height="7.5" rx="1.2" fill="#D97706"/>
+          </svg>`;
+        case 3: // Quạt
+          return `<svg width="56" height="54" viewBox="0 0 56 54" fill="none">
+            <circle cx="28" cy="21" r="17" stroke="${isOn ? '#BAE6FD' : '#64748B'}" stroke-width="1.9" fill="rgba(56, 189, 248, ${isOn ? '0.16' : '0.04'})"/>
+            <path d="M28 21L22.8 9.2C26 7.6 30 7.6 33.2 9.2L28 21Z" fill="${isOn ? '#38BDF8' : '#64748B'}"/>
+            <path d="M28 21L39.8 25.2C39.8 28.8 37.6 31.9 34.5 33.4L28 21Z" fill="${isOn ? '#0EA5E9' : '#475569'}"/>
+            <path d="M28 21L16.2 25.2C16.2 28.8 18.4 31.9 21.5 33.4L28 21Z" fill="${isOn ? '#7DD3FC' : '#94A3B8'}"/>
+            <circle cx="28" cy="21" r="3.8" fill="#F8FAFC"/>
+            <rect x="26" y="38" width="4" height="9.5" fill="#CBD5E1"/>
+            <ellipse cx="28" cy="48.2" rx="11.5" ry="3.2" fill="#E2E8F0"/>
+          </svg>`;
+        case 4: // Phòng Ăn
+          return `<svg width="72" height="50" viewBox="0 0 72 50" fill="none">
+            <rect x="10" y="9.5" width="9.5" height="16.5" rx="2.2" fill="#D97706"/>
+            <rect x="52.5" y="9.5" width="9.5" height="16.5" rx="2.2" fill="#D97706"/>
+            <rect x="20.5" y="21.5" width="31" height="4.2" rx="1.5" fill="#FBBF24"/>
+            <rect x="34.2" y="25.7" width="3.6" height="15.5" fill="#D97706"/>
+            <rect x="11" y="26" width="2.7" height="15.2" fill="#B45309"/>
+            <rect x="17" y="26" width="2.7" height="15.2" fill="#B45309"/>
+            <rect x="52.5" y="26" width="2.7" height="15.2" fill="#B45309"/>
+            <rect x="58.5" y="26" width="2.7" height="15.2" fill="#B45309"/>
+          </svg>`;
+        case 5: // Bàn làm việc (Đèn bàn)
+          return `<svg width="64" height="54" viewBox="0 0 64 54" fill="none">
+            <ellipse cx="24" cy="45.5" rx="12.5" ry="3.2" fill="#D97706"/>
+            <path d="M24 44.5L32.5 25.5L22.5 13" stroke="#F59E0B" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18.5 12L35 8L42 19.5L23.5 22.5L18.5 12Z" fill="#27272A" stroke="#71717A" stroke-width="1.4"/>
+            <path d="M33.5 21L48.5 43.5H27.5L33.5 21Z" fill="#FDE047" opacity="${isOn ? '0.68' : '0.08'}"/>
+          </svg>`;
+        case 6: // Máy bơm nước
+          return `<svg width="72" height="50" viewBox="0 0 72 50" fill="none">
+            <rect x="12.5" y="39" width="47" height="4.2" rx="2" fill="#475569"/>
+            <rect x="21" y="16" width="30" height="21" rx="4.2" fill="${isOn ? '#2563EB' : '#3B82F6'}"/>
+            <line x1="26.5" y1="19.5" x2="45.5" y2="19.5" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
+            <line x1="26.5" y1="24.5" x2="45.5" y2="24.5" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
+            <line x1="26.5" y1="29.5" x2="45.5" y2="29.5" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
+            <line x1="26.5" y1="34" x2="45.5" y2="34" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="15.5" cy="26.5" r="9.5" fill="#1D4ED8" stroke="#60A5FA" stroke-width="1.5"/>
+            <rect x="12.5" y="10.5" width="6" height="6.5" rx="1" fill="#3B82F6"/>
+            <rect x="51" y="18" width="7.5" height="17" rx="2.5" fill="#1E40AF"/>
+            <rect x="29.5" y="10.5" width="13" height="5.5" rx="1.5" fill="#60A5FA"/>
+          </svg>`;
+        default: // Camera
+          return `<svg width="58" height="54" viewBox="0 0 58 54" fill="none">
+            <path d="M12.5 14C12.5 10.6 19.8 8 29 8C38.2 8 45.5 10.6 45.5 14V18H12.5V14Z" fill="#E2E8F0"/>
+            <path d="M14.5 18H43.5C43.5 30.5 37.2 40 29 40C20.8 40 14.5 30.5 14.5 18Z" fill="#F8FAFC"/>
+            <circle cx="29" cy="27.5" r="9" fill="#1E293B"/>
+            <circle cx="29" cy="27.5" r="5.3" fill="#0F172A" stroke="#475569" stroke-width="1.2"/>
+            <circle cx="26.8" cy="25.3" r="1.7" fill="#94A3B8"/>
+            <circle cx="37.5" cy="22.5" r="1.6" fill="${isOn ? '#22C55E' : '#64748B'}"/>
+          </svg>`;
+      }
+    }
 
     function escapeHtml(s) {
       const d = document.createElement("div");
@@ -85,33 +495,113 @@
       return d.innerHTML;
     }
 
-    function render() {
+    function updateClockAndDate() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      document.getElementById("clockText").innerText = `${hh}:${mm}`;
+
+      const days = ["CN", "Th 2", "Th 3", "Th 4", "Th 5", "Th 6", "Th 7"];
+      const dd = String(now.getDate()).padStart(2, "0");
+      const mo = String(now.getMonth() + 1).padStart(2, "0");
+      const yr = now.getFullYear();
+      document.getElementById("dateText").innerText = `${days[now.getDay()]}, ${dd}/${mo}/${yr}`;
+    }
+
+    function mapWeatherCodeVi(code) {
+      if (code === 0) return "Trời quang";
+      if (code === 1 || code === 2) return "Có mây";
+      if (code === 3) return "Nhiều mây";
+      if (code === 45 || code === 48) return "Sương mù";
+      if (code >= 51 && code <= 67) return "Mưa nhẹ";
+      if (code >= 80 && code <= 82) return "Mưa rào";
+      if (code >= 95) return "Dông bão";
+      return "Có mây";
+    }
+
+    async function fetchWeatherByCoords(lat, lon, cityLabel) {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia%2FBangkok`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.current) {
+          document.getElementById("weatherTemp").innerText = `${Math.round(data.current.temperature_2m)}°C`;
+          document.getElementById("outdoorHumText").innerText = `Độ ẩm: ${Math.round(data.current.relative_humidity_2m)}%`;
+          document.getElementById("weatherCond").innerText = mapWeatherCodeVi(data.current.weather_code);
+        }
+        if (cityLabel) {
+          document.getElementById("locationText").innerText = cityLabel;
+        }
+      } catch (e) {}
+    }
+
+    async function initWeather() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const geo = await res.json();
+        const city = geo.city || geo.region || "Hà Nội";
+        const lat = geo.latitude || 21.0285;
+        const lon = geo.longitude || 105.8542;
+        await fetchWeatherByCoords(lat, lon, city);
+      } catch (e) {
+        await fetchWeatherByCoords(21.0285, 105.8542, "Hà Nội");
+      }
+    }
+
+    function setCloudIndicator(online) {
+      const box = document.getElementById("cloudIndicator");
+      const halo = document.getElementById("ledHalo");
+      const rays = document.getElementById("ledRays");
+      const ring = document.getElementById("ledRing");
+      const txt = document.getElementById("cloudLedText");
+      if (online) {
+        box.classList.remove("offline");
+        halo.setAttribute("fill", "url(#ledGlowGreen)");
+        rays.setAttribute("stroke", "#26E841");
+        ring.setAttribute("fill", "#16A34A");
+        ring.setAttribute("stroke", "#86EFAC");
+        txt.innerHTML = "Kết nối<br>WiFi";
+      } else {
+        box.classList.add("offline");
+        halo.setAttribute("fill", "url(#ledGlowWarn)");
+        rays.setAttribute("stroke", "#FACC15");
+        ring.setAttribute("fill", "#D97706");
+        ring.setAttribute("stroke", "#FDE047");
+        txt.innerHTML = "Đang chờ<br>Cloud";
+      }
+    }
+
+    function renderRelays() {
       const grid = document.getElementById("relayGrid");
       grid.innerHTML = "";
-      let anyOn = false;
+      let onCount = 0;
 
       relays.forEach((st, idx) => {
-        if (st) anyOn = true;
+        if (st) onCount++;
         const card = document.createElement("div");
         card.className = "relay-card";
         card.innerHTML = `
           <div class="relay-top">
-            <span class="state-label ${st ? "on" : ""}">${st ? "ĐANG BẬT" : "ĐANG TẮT"}</span>
+            <div class="relay-icon-box" onclick="toggleOne(${idx})">${getDeviceSvg(idx, st)}</div>
             <label class="switch">
               <input type="checkbox" ${st ? "checked" : ""} onchange="toggleOne(${idx})">
               <span class="slider"></span>
             </label>
           </div>
-          <div class="relay-title">${escapeHtml(names[idx] || ("Relay " + (idx + 1)))}</div>
+          <div class="relay-meta">
+            <div class="relay-title">${escapeHtml(names[idx] || ("Relay " + (idx + 1)))}</div>
+          </div>
         `;
         grid.appendChild(card);
       });
 
-      document.getElementById("masterBtn").innerText = anyOn ? "Tắt tất cả thiết bị" : "Bật tất cả thiết bị";
-      document.getElementById("masterBtn").dataset.next = anyOn ? "0" : "1";
+      const anyOn = onCount > 0;
+      const btn = document.getElementById("masterBtn");
+      document.getElementById("masterBtnText").innerText = anyOn ? "Tắt tất cả thiết bị" : "Bật tất cả thiết bị";
+      btn.dataset.next = anyOn ? "0" : "1";
     }
 
-    async function pushRelays() {
+    async function pushRelaysToFirebase() {
       isUpdating = true;
       try {
         await fetch(`${NODE_URL}/relays.json`, {
@@ -126,26 +616,24 @@
 
     async function toggleOne(idx) {
       relays[idx] = !relays[idx];
-      render();
-      await pushRelays();
+      renderRelays();
+      await pushRelaysToFirebase();
     }
 
-    async function toggleAll() {
+    async function toggleAllDevices() {
       const nextVal = document.getElementById("masterBtn").dataset.next === "1";
       relays = Array(NUM_RELAYS).fill(nextVal);
-      render();
-      await pushRelays();
+      renderRelays();
+      await pushRelaysToFirebase();
     }
 
     async function pollFirebase() {
       if (isUpdating) return;
-      const pill = document.getElementById("cloudStatus");
       try {
         const res = await fetch(`${NODE_URL}.json`);
         if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
-        pill.className = "status-pill";
-        pill.innerText = "Cloud Online";
+        setCloudIndicator(true);
 
         if (data && Array.isArray(data.relays)) {
           for (let i = 0; i < NUM_RELAYS; i++) {
@@ -157,16 +645,125 @@
             if (data.names[i]) names[i] = String(data.names[i]);
           }
         }
-        render();
-      } catch (err) {
-        pill.className = "status-pill offline";
-        pill.innerText = "Mất kết nối Cloud";
+        renderRelays();
+      } catch (e) {
+        setCloudIndicator(false);
       }
     }
 
-    render();
+    function switchTab(tabName, btnEl) {
+      document.querySelectorAll(".tab-view").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById("tab-" + tabName).classList.add("active");
+      if (btnEl) btnEl.classList.add("active");
+
+      if (tabName === "timer") {
+        populateTimerSelect();
+        renderActiveTimers();
+      } else if (tabName === "settings") {
+        buildNameInputs();
+      }
+    }
+
+    function populateTimerSelect() {
+      const sel = document.getElementById("timerChannel");
+      const prev = sel.value;
+      sel.innerHTML = "";
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        sel.add(new Option(`Relay ${i + 1} - ${names[i]}`, i));
+      }
+      if (prev !== "") sel.value = prev;
+    }
+
+    function startCloudTimer(targetOn) {
+      const idx = parseInt(document.getElementById("timerChannel").value, 10);
+      const mins = parseInt(document.getElementById("timerMinutes").value, 10);
+      if (!mins || mins < 1) {
+        document.getElementById("timerFeedback").innerText = "Vui lòng nhập số phút >= 1";
+        return;
+      }
+      cloudTimers[idx] = { endAt: Date.now() + mins * 60000, target: targetOn };
+      document.getElementById("timerFeedback").innerText =
+        `Đã đặt hẹn giờ ${mins} phút (${targetOn ? "BẬT" : "TẮT"}) cho ${names[idx]}`;
+      renderActiveTimers();
+    }
+
+    async function checkCloudTimers() {
+      const now = Date.now();
+      let changed = false;
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        const t = cloudTimers[i];
+        if (t && now >= t.endAt) {
+          relays[i] = t.target;
+          cloudTimers[i] = null;
+          changed = true;
+        }
+      }
+      if (changed) {
+        renderRelays();
+        await pushRelaysToFirebase();
+      }
+      if (document.getElementById("tab-timer").classList.contains("active")) {
+        renderActiveTimers();
+      }
+    }
+
+    function renderActiveTimers() {
+      const now = Date.now();
+      const box = document.getElementById("activeTimerList");
+      const items = [];
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        const t = cloudTimers[i];
+        if (t && t.endAt > now) {
+          const remMin = Math.ceil((t.endAt - now) / 60000);
+          items.push(`<div class="info-box"><b>${escapeHtml(names[i])}</b> • Còn khoảng ${remMin} phút → <b>${t.target ? "BẬT" : "TẮT"}</b></div>`);
+        }
+      }
+      box.innerHTML = items.length ? items.join("") : '<div class="info-box" style="margin:0;">Chưa có hẹn giờ nào đang chạy.</div>';
+    }
+
+    function buildNameInputs() {
+      const wrap = document.getElementById("relayNameFields");
+      wrap.innerHTML = "";
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.className = "input-ctrl";
+        inp.id = `nameInp_${i}`;
+        inp.maxLength = 30;
+        inp.value = names[i] || `Relay ${i + 1}`;
+        inp.style.marginBottom = "8px";
+        wrap.appendChild(inp);
+      }
+      settingsBuilt = true;
+    }
+
+    async function saveNamesToFirebase() {
+      for (let i = 0; i < NUM_RELAYS; i++) {
+        const el = document.getElementById(`nameInp_${i}`);
+        if (el) {
+          const val = el.value.trim();
+          if (val) names[i] = val;
+        }
+      }
+      renderRelays();
+      await fetch(`${NODE_URL}/names.json`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(names)
+      });
+      document.getElementById("nameFeedback").innerText = "Đã lưu tên thiết bị lên Firebase!";
+    }
+
+    updateClockAndDate();
+    initWeather();
+    renderRelays();
     pollFirebase();
+
+    setInterval(updateClockAndDate, 1000);
+    setInterval(checkCloudTimers, 1000);
     setInterval(pollFirebase, 1500);
+    setInterval(initWeather, 15 * 60 * 1000);
   </script>
 </body>
 </html>
