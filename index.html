@@ -3,1335 +3,170 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Nhà thông minh</title>
+  <title>Toan Smart Home - Cloud</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-    :root {
-      --bg-main: #07060c;
-      --card-bg: #17161f;
-      --card-border: rgba(255, 255, 255, 0.08);
-      --text-main: #ffffff;
-      --text-sub: #c6c5d4;
-      --text-muted: #8b8aa0;
-      --accent: #6863f2;
-      --accent-soft: rgba(104, 99, 242, 0.22);
-    }
-    body.light-theme {
-      --bg-main: #f3f4fa;
-      --card-bg: #ffffff;
-      --card-border: rgba(20, 20, 40, 0.09);
-      --text-main: #11121a;
-      --text-sub: #383a4d;
-      --text-muted: #6a6d85;
-      --accent: #5651e5;
-      --accent-soft: rgba(86, 81, 229, 0.12);
-    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg-main);
+      background-color: #08070d;
       background-image:
-        radial-gradient(circle at 78% 12%, rgba(112, 82, 224, 0.26) 0%, rgba(18, 15, 32, 0) 48%),
-        radial-gradient(circle at 22% 76%, rgba(88, 66, 185, 0.14) 0%, rgba(8, 7, 13, 0) 52%);
-      color: var(--text-main);
+        radial-gradient(circle at 75% 18%, rgba(112, 82, 224, 0.28) 0%, rgba(18, 15, 32, 0) 48%),
+        radial-gradient(circle at 20% 78%, rgba(88, 66, 185, 0.14) 0%, rgba(8, 7, 13, 0) 50%);
+      color: #ffffff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding-bottom: 92px;
-      transition: background-color 0.25s ease, color 0.25s ease;
+      padding-bottom: 36px;
     }
-    body.light-theme {
-      background-image:
-        radial-gradient(circle at 78% 10%, rgba(104, 99, 242, 0.14) 0%, rgba(243, 244, 250, 0) 45%);
+    .app { width: 100%; max-width: 440px; padding: 18px; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .header h1 { font-size: 24px; font-weight: 700; }
+    .status-pill {
+      font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px;
+      background: rgba(34, 197, 94, 0.16); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.35);
     }
-
-    .app { width: 100%; max-width: 440px; padding: 14px 16px 16px; }
-
-    /* Top Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
+    .status-pill.offline {
+      background: rgba(251, 191, 36, 0.16); color: #fbbf24; border-color: rgba(251, 191, 36, 0.35);
     }
-    .header h1 {
-      font-size: 27px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      line-height: 1.15;
-    }
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .icon-circle-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.15s ease, background 0.2s ease;
-    }
-    body.light-theme .icon-circle-btn {
-      background: rgba(17, 18, 26, 0.06);
-      border-color: rgba(17, 18, 26, 0.1);
-    }
-    .icon-circle-btn:active { transform: scale(0.94); }
-
-    /* Weather Hero */
-    .weather-hero {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 14px;
-      padding: 2px 2px;
-    }
-    .weather-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .weather-temp {
-      font-size: 38px;
-      font-weight: 600;
-      line-height: 1.02;
-      letter-spacing: -1px;
-    }
-    .weather-cond {
-      font-size: 14.5px;
-      color: var(--text-sub);
-      margin-top: 3px;
-    }
-    .weather-divider {
-      width: 1px;
-      height: 56px;
-      background: rgba(255, 255, 255, 0.2);
-      flex-shrink: 0;
-    }
-    body.light-theme .weather-divider { background: rgba(17, 18, 26, 0.16); }
-    .weather-meta {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      font-size: 12.5px;
-      color: var(--text-sub);
-      min-width: 0;
-      flex: 1;
-    }
-    .meta-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      line-height: 1.25;
-    }
-    .meta-icon {
-      width: 14px;
-      height: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .loc-text {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 138px;
-    }
-
-    /* Indoor Sensor Bar */
-    .indoor-bar {
-      background: linear-gradient(90deg, rgba(33, 31, 48, 0.92) 0%, rgba(25, 24, 38, 0.95) 50%, rgba(22, 30, 46, 0.92) 100%);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 11px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-    }
-    body.light-theme .indoor-bar {
-      background: var(--card-bg);
-      box-shadow: 0 4px 14px rgba(17, 18, 26, 0.05);
-    }
-    .indoor-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
-    }
-    .indoor-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.2;
-      white-space: nowrap;
-    }
-    .indoor-value {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-top: 2px;
-    }
-    .indoor-divider {
-      width: 1px;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.16);
-      margin: 0 12px;
-      flex-shrink: 0;
-    }
-    body.light-theme .indoor-divider { background: rgba(17, 18, 26, 0.12); }
-
-    /* Room / Filter Chips */
-    .room-tabs {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 16px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .room-tabs::-webkit-scrollbar { display: none; }
-    .room-chip {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 13.5px;
-      font-weight: 600;
-      padding: 8px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-    }
-    .room-chip.active {
-      background: #7b73f5;
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(123, 115, 245, 0.4);
-    }
-
-    /* Relay Cards Grid */
-    .relay-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 13px;
-      margin-bottom: 18px;
-    }
+    .relay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
     .relay-card {
-      background: linear-gradient(155deg, rgba(35, 34, 46, 0.94) 0%, rgba(21, 20, 29, 0.98) 100%);
-      border: 1px solid var(--card-border);
-      border-radius: 22px;
-      padding: 13px 14px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 122px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      transition: transform 0.15s ease, border-color 0.2s ease;
+      background: linear-gradient(155deg, rgba(36, 35, 44, 0.92) 0%, rgba(23, 22, 29, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 22px;
+      padding: 16px; display: flex; flex-direction: column; justify-content: space-between; min-height: 112px;
     }
-    body.light-theme .relay-card {
-      background: var(--card-bg);
-      box-shadow: 0 6px 16px rgba(17, 18, 26, 0.06);
-    }
-    .relay-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .relay-icon-box {
-      width: 68px;
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      cursor: pointer;
-    }
-
-    /* Toggle Switch */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 48px;
-      height: 27px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
+    .relay-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .state-label { font-size: 12px; font-weight: 600; color: #9e9eb0; }
+    .state-label.on { color: #818cf8; }
+    .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
     .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background-color: #363642;
-      transition: 0.22s;
-      border-radius: 34px;
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #36363f; transition: 0.25s; border-radius: 34px; }
+    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #fff; transition: 0.25s; border-radius: 50%; }
+    input:checked + .slider { background-color: #5b5ce6; }
+    input:checked + .slider:before { transform: translateX(22px); }
+    .relay-title { font-size: 15.5px; font-weight: 500; color: #f3f3f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .master-btn {
+      width: 100%; background: linear-gradient(90deg, #4b4ce0 0%, #6162f0 100%);
+      border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px;
+      padding: 14px 20px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
     }
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 21px;
-      width: 21px;
-      left: 3px;
-      bottom: 3px;
-      background-color: #ffffff;
-      transition: 0.22s;
-      border-radius: 50%;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
-    }
-    input:checked + .slider { background-color: #5b56f0; }
-    input:checked + .slider:before { transform: translateX(21px); }
-
-    .relay-title {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.25;
-    }
-    .relay-subrow {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-top: 3px;
-    }
-    .relay-sub {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-    .relay-sub.is-on { color: #8c86ff; }
-    .timer-badge {
-      font-size: 10px;
-      font-weight: 700;
-      color: #fde047;
-      background: rgba(250, 204, 21, 0.16);
-      padding: 2px 6px;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-
-    /* Quick Batch Bar */
-    .batch-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .batch-btn {
-      flex: 1;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-main);
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .batch-btn.on-btn {
-      background: linear-gradient(90deg, #4b4ce0 0%, #6566f5 100%);
-      border-color: rgba(255, 255, 255, 0.16);
-      color: #fff;
-    }
-
-    /* Bottom Navigation */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 440px;
-      height: 76px;
-      background: linear-gradient(180deg, #242330 0%, #16151f 100%);
-      border-top: 1px solid rgba(255, 255, 255, 0.09);
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 4px 10px 8px;
-      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.55);
-      z-index: 50;
-    }
-    body.light-theme .bottom-nav {
-      background: #ffffff;
-      border-top-color: rgba(17, 18, 26, 0.08);
-      box-shadow: 0 -6px 24px rgba(17, 18, 26, 0.08);
-    }
-    .nav-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 11.5px;
-      font-weight: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      padding: 6px 10px;
-      position: relative;
-    }
-    .nav-btn.active { color: #8c86ff; }
-    .nav-btn.active::after {
-      content: "";
-      width: 24px;
-      height: 3px;
-      background: #8c86ff;
-      border-radius: 3px;
-      margin-top: 1px;
-    }
-
-    /* Tabs & Panels */
-    .tab-view { display: none; }
-    .tab-view.active { display: block; }
-    .page-title { font-size: 22px; font-weight: 700; margin-bottom: 14px; }
-    .panel-card {
-      background: rgba(26, 25, 36, 0.95);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 15px;
-      margin-bottom: 13px;
-    }
-    body.light-theme .panel-card {
-      background: var(--card-bg);
-      box-shadow: 0 4px 14px rgba(17, 18, 26, 0.05);
-    }
-    .panel-title { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; }
-    .field { margin-bottom: 11px; }
-    .field label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 5px; }
-    .input-ctrl {
-      width: 100%;
-      background: rgba(10, 9, 16, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 10px 12px;
-      color: #ffffff;
-      font-size: 14px;
-      outline: none;
-    }
-    body.light-theme .input-ctrl {
-      background: #f4f5fa;
-      color: #11121a;
-      border-color: rgba(17, 18, 26, 0.12);
-    }
-    .row-2 { display: flex; gap: 10px; }
-    .btn-primary {
-      width: 100%;
-      background: #5b56f0;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 11px;
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-on {
-      flex: 1;
-      background: #22c55e;
-      color: #05200e;
-      border: none;
-      border-radius: 12px;
-      padding: 10px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-off {
-      flex: 1;
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      padding: 10px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-subtle {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-main);
-      border: 1px solid var(--card-border);
-      border-radius: 10px;
-      padding: 7px 11px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .days-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; font-size: 12.5px; }
-    .days-grid label {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 7px 8px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    .info-box {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 12.5px;
-      color: var(--text-sub);
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-    .feedback { font-size: 12.5px; color: #4ade80; margin-top: 8px; text-align: center; min-height: 16px; }
-    .badge-pill {
-      display: inline-block;
-      font-size: 11.5px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: #9e99ff;
-    }
-
-    /* Modal Quick Add */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 100;
-    }
-    .modal-backdrop.open { display: flex; }
-    .modal-card {
-      width: 100%;
-      max-width: 390px;
-      background: #1b1a26;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      border-radius: 22px;
-      padding: 18px;
-    }
-    body.light-theme .modal-card { background: #ffffff; color: #11121a; }
+    .hint { margin-top: 14px; font-size: 12px; color: #9e9eb0; text-align: center; line-height: 1.5; }
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- TAB TRANG CHỦ -->
-    <div id="tab-home" class="tab-view active">
-      <div class="header">
-        <h1>Nhà thông minh</h1>
-        <div class="header-actions">
-          <button type="button" class="icon-circle-btn" title="Cài đặt hệ thống" onclick="openSettingsTab()">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-          </button>
-          <button type="button" class="icon-circle-btn" title="Hẹn giờ nhanh" onclick="openQuickAddModal()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-              <circle cx="12" cy="12" r="9"></circle>
-              <line x1="12" y1="8" x2="12" y2="16"></line>
-              <line x1="8" y1="12" x2="16" y2="12"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Thời tiết & Vị trí -->
-      <div class="weather-hero">
-        <div class="weather-left">
-          <svg width="64" height="54" viewBox="0 0 68 56" fill="none">
-            <circle cx="24" cy="21" r="12" fill="#FACC15"/>
-            <g stroke="#FACC15" stroke-width="2.5" stroke-linecap="round">
-              <line x1="24" y1="3" x2="24" y2="6.5"/><line x1="24" y1="35.5" x2="24" y2="39"/>
-              <line x1="6" y1="21" x2="9.5" y2="21"/><line x1="38.5" y1="21" x2="42" y2="21"/>
-              <line x1="11.5" y1="8.5" x2="14" y2="11"/><line x1="34" y1="31" x2="36.5" y2="33.5"/>
-              <line x1="36.5" y1="8.5" x2="34" y2="11"/><line x1="14" y1="31" x2="11.5" y2="33.5"/>
-            </g>
-            <path d="M21 48h30a10 10 0 0 0 1.4-19.9A13.5 13.5 0 0 0 25 23a9.5 9.5 0 0 0-4 25z" fill="#F8FAFC"/>
-          </svg>
-          <div>
-            <div class="weather-temp" id="weatherTemp">28°C</div>
-            <div class="weather-cond" id="weatherCond">Có mây</div>
-          </div>
-        </div>
-
-        <div class="weather-divider"></div>
-
-        <div class="weather-meta">
-          <div class="meta-row">
-            <span class="meta-icon">
-              <svg width="13" height="15" viewBox="0 0 16 18" fill="currentColor">
-                <path d="M8 0.5A5.8 5.8 0 0 0 2.2 6.3c0 4.3 5.8 11.2 5.8 11.2s5.8-6.9 5.8-11.2A5.8 5.8 0 0 0 8 0.5zm0 8a2.2 2.2 0 1 1 0-4.4 2.2 2.2 0 0 1 0 4.4z"/>
-              </svg>
-            </span>
-            <span class="loc-text" id="locationText">Hà Nội</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-icon">
-              <svg width="13" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
-                <rect x="2" y="3" width="12" height="11" rx="2"/><line x1="2" y1="6.5" x2="14" y2="6.5"/>
-                <line x1="5.5" y1="1.5" x2="5.5" y2="4"/><line x1="10.5" y1="1.5" x2="10.5" y2="4"/>
-              </svg>
-            </span>
-            <span id="dateText">Th 2, 20/11/2026</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-icon">
-              <svg width="12" height="15" viewBox="0 0 14 18" fill="currentColor">
-                <path d="M7 1C7 1 1.5 7.8 1.5 12a5.5 5.5 0 0 0 11 0C12.5 7.8 7 1 7 1z"/>
-              </svg>
-            </span>
-            <span id="outdoorHumText">Độ ẩm: 72%</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Thanh Nhiệt độ & Độ ẩm trong nhà -->
-      <div class="indoor-bar">
-        <div class="indoor-item">
-          <svg width="24" height="30" viewBox="0 0 24 30" fill="none">
-            <path d="M14 4a2 2 0 1 0-4 0v12.2a5 5 0 1 0 4 0V4z" fill="url(#tempGrad)"/>
-            <defs>
-              <linearGradient id="tempGrad" x1="12" y1="2" x2="12" y2="26" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#C084FC"/>
-                <stop offset="100%" stop-color="#38BDF8"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <div>
-            <div class="indoor-label">Nhiệt độ trong nhà</div>
-            <div class="indoor-value" id="indoorTempVal">28.5°C</div>
-          </div>
-        </div>
-
-        <div class="indoor-divider"></div>
-
-        <div class="indoor-item">
-          <svg width="22" height="28" viewBox="0 0 24 28" fill="none">
-            <path d="M12 2C12 2 4 11.8 4 17.8a8 8 0 0 0 16 0C20 11.8 12 2 12 2z" fill="url(#humGrad)"/>
-            <defs>
-              <linearGradient id="humGrad" x1="12" y1="2" x2="12" y2="25" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#38BDF8"/>
-                <stop offset="100%" stop-color="#2563EB"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <div>
-            <div class="indoor-label">Độ ẩm trong nhà</div>
-            <div class="indoor-value" id="indoorHumVal">71%</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bộ lọc khu vực / phòng -->
-      <div class="room-tabs" id="roomTabs">
-        <button type="button" class="room-chip active" data-room="all" onclick="selectRoom('all', this)">Yêu thích</button>
-        <button type="button" class="room-chip" data-room="living" onclick="selectRoom('living', this)">Phòng khách</button>
-        <button type="button" class="room-chip" data-room="dining" onclick="selectRoom('dining', this)">Phòng ăn</button>
-        <button type="button" class="room-chip" data-room="work" onclick="selectRoom('work', this)">Làm việc</button>
-      </div>
-
-      <!-- Lưới 6 Relay -->
-      <div class="relay-grid" id="relayGrid"></div>
-
-      <!-- Điều khiển hàng loạt -->
-      <div class="batch-row">
-        <button type="button" class="batch-btn on-btn" onclick="setBatchAll(1)">Bật hết</button>
-        <button type="button" class="batch-btn" onclick="setBatchAll(0)">Tắt hết</button>
-      </div>
+    <div class="header">
+      <h1>Toan Smart Home</h1>
+      <div class="status-pill offline" id="cloudStatus">Đang kết nối...</div>
     </div>
 
-    <!-- TAB LỊCH HẸN -->
-    <div id="tab-schedule" class="tab-view">
-      <div class="page-title">Lịch hẹn & Đếm ngược</div>
+    <div class="relay-grid" id="relayGrid"></div>
 
-      <div class="panel-card">
-        <div class="panel-title">Hẹn giờ đếm ngược</div>
-        <div class="field">
-          <label>Chọn kênh thiết bị</label>
-          <select class="input-ctrl" id="timerChannel" onchange="syncTimerCancelBtn()"></select>
-        </div>
-        <div class="field">
-          <label>Thời gian đếm ngược (phút)</label>
-          <input type="number" class="input-ctrl" id="timerMinutes" min="1" max="10080" placeholder="Ví dụ: 5, 15, 30, 60">
-        </div>
-        <div class="row-2">
-          <button type="button" class="btn-on" onclick="submitTimer(1)">Hẹn giờ BẬT</button>
-          <button type="button" class="btn-off" onclick="submitTimer(0)">Hẹn giờ TẮT</button>
-        </div>
-        <button type="button" class="btn-subtle" id="cancelTimerBtn" onclick="cancelTimer()" style="width:100%; margin-top:10px; display:none;">Hủy hẹn giờ</button>
-        <div class="feedback" id="timerFeedback"></div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">Lịch hẹn lặp theo ngày trong tuần</div>
-        <div class="field">
-          <label>Chọn thiết bị</label>
-          <select class="input-ctrl" id="scheduleRelay"></select>
-        </div>
-        <div class="field">
-          <label>Giờ thực hiện (Giờ : Phút)</label>
-          <div class="row-2">
-            <input type="number" class="input-ctrl" id="scheduleHour" min="0" max="23" value="18">
-            <input type="number" class="input-ctrl" id="scheduleMinute" min="0" max="59" value="0">
-          </div>
-        </div>
-        <div class="field">
-          <label>Lặp lại vào các thứ</label>
-          <div class="days-grid">
-            <label><input type="checkbox" class="schedule-day" value="0"> CN</label>
-            <label><input type="checkbox" class="schedule-day" value="1" checked> T2</label>
-            <label><input type="checkbox" class="schedule-day" value="2" checked> T3</label>
-            <label><input type="checkbox" class="schedule-day" value="3" checked> T4</label>
-            <label><input type="checkbox" class="schedule-day" value="4" checked> T5</label>
-            <label><input type="checkbox" class="schedule-day" value="5" checked> T6</label>
-            <label><input type="checkbox" class="schedule-day" value="6"> T7</label>
-          </div>
-        </div>
-        <div class="row-2">
-          <button type="button" class="btn-on" onclick="saveWeeklySchedule(1)">Lưu lịch BẬT</button>
-          <button type="button" class="btn-off" onclick="saveWeeklySchedule(0)">Lưu lịch TẮT</button>
-        </div>
-        <div class="feedback" id="scheduleFeedback"></div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">Danh sách lịch hẹn đang hoạt động</div>
-        <div id="weeklyScheduleList"><div class="info-box">Đang tải lịch hẹn...</div></div>
-      </div>
-    </div>
-
-    <!-- TAB THIẾT BỊ -->
-    <div id="tab-devices" class="tab-view">
-      <div class="page-title">Thiết bị & Cấu hình kênh</div>
-      <div class="info-box" id="netStatusBox">Đang tải thông tin kết nối...</div>
-
-      <div class="panel-card">
-        <div class="panel-title">Đổi tên & gán phòng cho 6 Relay</div>
-        <div id="relayNameFields"></div>
-        <button type="button" class="btn-primary" onclick="saveNames()">Lưu tên thiết bị</button>
-        <div class="feedback" id="nameFeedback"></div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">Cấu hình mạng WiFi</div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <span style="font-size:12.5px; color:var(--text-muted);">Quét mạng xung quanh hoặc nhập thủ công</span>
-          <button type="button" class="btn-subtle" onclick="scanWiFi()">Quét WiFi</button>
-        </div>
-        <select class="input-ctrl" id="wifiList" onchange="if(this.value) document.getElementById('ssidField').value=this.value" style="margin-bottom:10px; display:none;"></select>
-        <div class="field">
-          <label>Tên mạng WiFi (SSID)</label>
-          <input type="text" class="input-ctrl" id="ssidField" placeholder="Nhập tên WiFi">
-        </div>
-        <div class="field">
-          <label>Mật khẩu WiFi</label>
-          <input type="password" class="input-ctrl" id="passField" placeholder="Nhập mật khẩu WiFi">
-        </div>
-        <button type="button" class="btn-primary" onclick="saveWiFi()">Lưu & Kết nối WiFi</button>
-        <div class="feedback" id="wifiFeedback"></div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">Vị trí hiển thị & Thời tiết</div>
-        <div class="field">
-          <label>Tên địa điểm (để trống để tự động định vị theo IP/WiFi)</label>
-          <input type="text" class="input-ctrl" id="locationField" maxlength="45" placeholder="Hà Nội">
-        </div>
-        <div class="row-2">
-          <button type="button" class="btn-primary" onclick="saveLocation(false)">Lưu vị trí</button>
-          <button type="button" class="btn-subtle" onclick="saveLocation(true)">Tự định vị lại</button>
-        </div>
-        <div class="feedback" id="locFeedback"></div>
-      </div>
-    </div>
-
-    <!-- TAB CÁ NHÂN -->
-    <div id="tab-profile" class="tab-view">
-      <div class="page-title">Cá nhân</div>
-
-      <div class="panel-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <div class="panel-title" style="margin:0;">Giao diện & Trạng thái hệ thống</div>
-          <span class="badge-pill" id="profileModeBadge">TOAN SMART HOME</span>
-        </div>
-        <div class="info-box" id="profileSummaryBox">
-          Đang đồng bộ dữ liệu bộ điều khiển ESP32...
-        </div>
-        <div class="row-2">
-          <button type="button" class="btn-subtle" style="flex:1;" onclick="toggleThemeMode()">Đổi nền Tối / Sáng</button>
-          <button type="button" class="btn-subtle" style="flex:1;" onclick="refreshAll()">Làm mới ngay</button>
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-title">Tác vụ nhanh</div>
-        <div class="row-2">
-          <button type="button" class="btn-on" onclick="setBatchAll(1)">Bật tất cả</button>
-          <button type="button" class="btn-off" onclick="setBatchAll(0)">Tắt tất cả</button>
-        </div>
-      </div>
-    </div>
+    <button class="master-btn" id="masterBtn" onclick="toggleAll()">Tắt tất cả thiết bị</button>
+    <div class="hint" id="hintText">Project: toan-smarthome-7ca3e • Điều khiển qua Internet</div>
   </div>
-
-  <!-- MODAL HẸN GIỜ NHANH (+) -->
-  <div class="modal-backdrop" id="quickAddModal" onclick="if(event.target===this) closeQuickAddModal()">
-    <div class="modal-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div class="panel-title" style="margin:0;">Hẹn giờ nhanh thiết bị</div>
-        <button type="button" class="btn-subtle" onclick="closeQuickAddModal()">Đóng</button>
-      </div>
-      <div class="field">
-        <label>Thiết bị</label>
-        <select class="input-ctrl" id="quickTimerCh"></select>
-      </div>
-      <div class="field">
-        <label>Số phút</label>
-        <input type="number" class="input-ctrl" id="quickTimerMin" min="1" max="10080" value="15">
-      </div>
-      <div class="row-2">
-        <button type="button" class="btn-on" onclick="submitQuickTimer(1)">Hẹn BẬT</button>
-        <button type="button" class="btn-off" onclick="submitQuickTimer(0)">Hẹn TẮT</button>
-      </div>
-      <div class="feedback" id="quickTimerFb"></div>
-    </div>
-  </div>
-
-  <!-- THANH ĐIỀU HƯỚNG DƯỚI -->
-  <nav class="bottom-nav">
-    <button type="button" class="nav-btn active" data-tab="home" onclick="switchTab('home', this)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1v-9.5z"></path>
-      </svg>
-      <span>Trang chủ</span>
-    </button>
-    <button type="button" class="nav-btn" data-tab="schedule" onclick="switchTab('schedule', this)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="4" width="18" height="17" rx="2.5"></rect>
-        <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
-      </svg>
-      <span>Lịch hẹn</span>
-    </button>
-    <button type="button" class="nav-btn" data-tab="devices" onclick="switchTab('devices', this)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-      </svg>
-      <span>Thiết bị</span>
-    </button>
-    <button type="button" class="nav-btn" data-tab="profile" onclick="switchTab('profile', this)">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-3.5 3.6-6 8-6s8 2.5 8 6"></path>
-      </svg>
-      <span>Cá nhân</span>
-    </button>
-  </nav>
 
   <script>
-    const NUM_RELAYS = 6;
-    const ROOM_MAP = {
-      0: 'all',
-      1: 'all',
-      2: 'living',
-      3: 'living',
-      4: 'dining',
-      5: 'work'
-    };
+    const FIREBASE_DB_URL = "https://toan-smarthome-7ca3e-default-rtdb.asia-southeast1.firebasedatabase.app";
+    const NODE_URL = `${FIREBASE_DB_URL}/toansmarthome`;
+    const NUM_RELAYS = 8;
 
-    const DEFAULT_MOCK_DATA = {
-      wifiConnected: true,
-      firebaseConnected: true,
-      mode: 'WiFi STA',
-      ip: '192.168.1.100',
-      lat: 21.0285,
-      lon: 105.8542,
-      ssid: 'May Tinh Toan Nga',
-      location: 'Hà Nội',
-      dateStr: 'Th 2, 20/11/2026',
-      clockHm: '09:41',
-      weatherTemp: 28,
-      weatherHum: 72,
-      weatherDesc: 'Có mây',
-      indoorTemp: 28.5,
-      indoorHum: 71,
-      names: ['Biển LED', 'Bóng điện 1', 'Phòng Khách', 'Quạt', 'Phòng Ăn', 'Bàn làm việc'],
-      relays: [true, true, false, true, false, true],
-      timers: [0, 0, 0, 0, 0, 0],
-      timerTargets: [false, false, false, false, false, false]
-    };
+    const DEFAULT_NAMES = [
+      "Biển LED", "Bóng điện 1", "Phòng Khách", "Quạt",
+      "Phòng Ăn", "Bàn làm việc", "Máy bơm nước", "Camera"
+    ];
 
-    let stateData = null;
-    let activeRoom = 'all';
-    let settingsInitialized = false;
-    let timerSelectInitialized = false;
-
-    function getDeviceSvg(idx, isOn) {
-      switch (idx) {
-        case 0:
-          return `<svg width="64" height="44" viewBox="0 0 68 48" fill="none">
-            <defs><radialGradient id="ceilBeam0" cx="50%" cy="25%" r="75%">
-              <stop offset="0%" stop-color="#FFFBEB" stop-opacity="${isOn ? '0.95' : '0.12'}"/>
-              <stop offset="55%" stop-color="#FDE047" stop-opacity="${isOn ? '0.45' : '0'}"/>
-              <stop offset="100%" stop-color="#FDE047" stop-opacity="0"/>
-            </radialGradient></defs>
-            ${isOn ? '<ellipse cx="34" cy="27" rx="28" ry="17" fill="url(#ceilBeam0)"/>' : ''}
-            <ellipse cx="34" cy="15" rx="23" ry="8" fill="#1F2028" stroke="#6B7280" stroke-width="1.4"/>
-            <ellipse cx="34" cy="16.5" rx="18" ry="5.5" fill="${isOn ? '#FFFDF0' : '#4B505C'}"/>
-          </svg>`;
-        case 1:
-          return `<svg width="46" height="46" viewBox="0 0 52 52" fill="none">
-            <defs><radialGradient id="bulbGlow1" cx="50%" cy="42%" r="55%">
-              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="${isOn ? '0.9' : '0'}"/>
-              <stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/>
-            </radialGradient></defs>
-            ${isOn ? '<circle cx="26" cy="21" r="20" fill="url(#bulbGlow1)"/>' : ''}
-            <path d="M26 5C17.2 5 10 12.2 10 21c0 5.8 3.1 10.9 7.8 13.7 1.4.8 2.2 2.3 2.2 3.9V40h12v-1.4c0-1.6.8-3.1 2.2-3.9C38.9 31.9 42 26.8 42 21 42 12.2 34.8 5 26 5z" fill="${isOn ? '#F8FAFC' : '#525663'}"/>
-            <rect x="20.5" y="40" width="11" height="7" rx="2" fill="#9CA3AF"/>
-          </svg>`;
-        case 2:
-          return `<svg width="64" height="44" viewBox="0 0 68 48" fill="none">
-            <path d="M13 13a5 5 0 0 1 5-5h32a5 5 0 0 1 5 5v12H13V13z" fill="#D1D5DB"/>
-            <rect x="7" y="18" width="8.5" height="15" rx="3.5" fill="#E5E7EB"/><rect x="52.5" y="18" width="8.5" height="15" rx="3.5" fill="#E5E7EB"/>
-            <rect x="14" y="24" width="40" height="9" rx="3" fill="#F3F4F6"/>
-            <rect x="14" y="33" width="3.5" height="7" rx="1.2" fill="#D97706"/><rect x="50.5" y="33" width="3.5" height="7" rx="1.2" fill="#D97706"/>
-          </svg>`;
-        case 3:
-          return `<svg width="48" height="48" viewBox="0 0 54 54" fill="none">
-            <circle cx="27" cy="21" r="16" stroke="${isOn ? '#7DD3FC' : '#6B7280'}" stroke-width="1.8" fill="rgba(56, 189, 248, ${isOn ? '0.16' : '0.04'})"/>
-            <path d="M27 21L22 9.5C25 8 29 8 32 9.5L27 21Z" fill="${isOn ? '#38BDF8' : '#64748B'}"/>
-            <path d="M27 21L38.5 25C38.5 28.5 36.4 31.5 33.4 33L27 21Z" fill="${isOn ? '#0EA5E9' : '#475569'}"/>
-            <path d="M27 21L15.5 25C15.5 28.5 17.6 31.5 20.6 33L27 21Z" fill="${isOn ? '#BAE6FD' : '#94A3B8'}"/>
-            <circle cx="27" cy="21" r="3.5" fill="#F8FAFC"/>
-            <rect x="25" y="37" width="4" height="9" fill="#CBD5E1"/><ellipse cx="27" cy="47" rx="11" ry="3" fill="#E2E8F0"/>
-          </svg>`;
-        case 4:
-          return `<svg width="64" height="44" viewBox="0 0 68 48" fill="none">
-            <rect x="9" y="10" width="9" height="15" rx="2" fill="#D97706"/><rect x="50" y="10" width="9" height="15" rx="2" fill="#D97706"/>
-            <rect x="19" y="21" width="30" height="4" rx="1.5" fill="#FBBF24"/><rect x="32.2" y="25" width="3.6" height="15" fill="#D97706"/>
-            <rect x="10" y="25" width="2.6" height="15" fill="#B45309"/><rect x="16" y="25" width="2.6" height="15" fill="#B45309"/>
-            <rect x="50" y="25" width="2.6" height="15" fill="#B45309"/><rect x="56" y="25" width="2.6" height="15" fill="#B45309"/>
-          </svg>`;
-        default:
-          return `<svg width="56" height="46" viewBox="0 0 62 52" fill="none">
-            <ellipse cx="24" cy="44" rx="12" ry="3" fill="#D97706"/>
-            <path d="M24 43L32 25L22 13" stroke="#F59E0B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M18 12L34 8L41 19L23 22L18 12Z" fill="#27272A" stroke="#71717A" stroke-width="1.4"/>
-            <path d="M33 20.5L47 42H27L33 20.5Z" fill="#FDE047" opacity="${isOn ? '0.62' : '0.08'}"/>
-          </svg>`;
-      }
-    }
+    let relays = Array(NUM_RELAYS).fill(false);
+    let names = [...DEFAULT_NAMES];
+    let isUpdating = false;
 
     function escapeHtml(s) {
-      const d = document.createElement('div');
-      d.innerText = String(s ?? '');
+      const d = document.createElement("div");
+      d.innerText = s;
       return d.innerHTML;
     }
 
-    function selectRoom(roomKey, btnEl) {
-      activeRoom = roomKey;
-      document.querySelectorAll('.room-chip').forEach(b => b.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
-      if (stateData) renderHome(stateData);
-    }
+    function render() {
+      const grid = document.getElementById("relayGrid");
+      grid.innerHTML = "";
+      let anyOn = false;
 
-    function switchTab(tabName, btnEl) {
-      document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      const view = document.getElementById('tab-' + tabName);
-      if (view) view.classList.add('active');
-      if (btnEl) {
-        btnEl.classList.add('active');
-      } else {
-        const navBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
-        if (navBtn) navBtn.classList.add('active');
-      }
-
-      if (tabName === 'schedule') {
-        populateTimerChannels();
-        loadWeeklySchedules();
-      } else if (tabName === 'devices') {
-        populateSettingsFields();
-      } else if (tabName === 'profile') {
-        renderProfileTab();
-      }
-    }
-
-    function openSettingsTab() {
-      switchTab('devices');
-    }
-
-    function openQuickAddModal() {
-      populateTimerChannels();
-      const qSel = document.getElementById('quickTimerCh');
-      const srcSel = document.getElementById('timerChannel');
-      qSel.innerHTML = srcSel.innerHTML;
-      document.getElementById('quickTimerFb').innerText = '';
-      document.getElementById('quickAddModal').classList.add('open');
-    }
-
-    function closeQuickAddModal() {
-      document.getElementById('quickAddModal').classList.remove('open');
-    }
-
-    function toggleThemeMode() {
-      document.body.classList.toggle('light-theme');
-      const isLight = document.body.classList.contains('light-theme');
-      localStorage.setItem('tsh_theme', isLight ? 'light' : 'dark');
-    }
-
-    (function initSavedTheme() {
-      if (localStorage.getItem('tsh_theme') === 'light') {
-        document.body.classList.add('light-theme');
-      }
-    })();
-
-    function renderHome(data) {
-      if (typeof data.weatherTemp === 'number') {
-        document.getElementById('weatherTemp').innerText = `${Math.round(data.weatherTemp)}°C`;
-      }
-      if (data.weatherDesc) {
-        document.getElementById('weatherCond').innerText = data.weatherDesc;
-      }
-      if (data.location) {
-        document.getElementById('locationText').innerText = data.location;
-        document.getElementById('locationText').title = data.location;
-      }
-      if (data.dateStr) {
-        document.getElementById('dateText').innerText = data.dateStr;
-      }
-      if (typeof data.weatherHum === 'number') {
-        document.getElementById('outdoorHumText').innerText = `Độ ẩm: ${data.weatherHum}%`;
-      }
-
-      const inTemp = typeof data.indoorTemp === 'number' ? data.indoorTemp : (data.weatherTemp ?? 28.5);
-      const inHum = typeof data.indoorHum === 'number' ? data.indoorHum : (data.weatherHum ?? 71);
-      document.getElementById('indoorTempVal').innerText = `${Number(inTemp).toFixed(1)}°C`;
-      document.getElementById('indoorHumVal').innerText = `${Math.round(inHum)}%`;
-
-      const grid = document.getElementById('relayGrid');
-      grid.innerHTML = '';
-
-      for (let idx = 0; idx < NUM_RELAYS; idx++) {
-        const room = ROOM_MAP[idx] || 'all';
-        if (activeRoom !== 'all' && room !== activeRoom) continue;
-
-        const st = Boolean(data.relays && data.relays[idx]);
-        const name = (data.names && data.names[idx]) || `Relay ${idx + 1}`;
-        const rem = (data.timers && data.timers[idx]) || 0;
-        const target = (data.timerTargets && data.timerTargets[idx]) ? 'BẬT' : 'TẮT';
-
-        const card = document.createElement('div');
-        card.className = 'relay-card';
+      relays.forEach((st, idx) => {
+        if (st) anyOn = true;
+        const card = document.createElement("div");
+        card.className = "relay-card";
         card.innerHTML = `
           <div class="relay-top">
-            <div class="relay-icon-box" onclick="toggleRelay(${idx})">${getDeviceSvg(idx, st)}</div>
+            <span class="state-label ${st ? "on" : ""}">${st ? "ĐANG BẬT" : "ĐANG TẮT"}</span>
             <label class="switch">
-              <input type="checkbox" ${st ? 'checked' : ''} onchange="toggleRelay(${idx})">
+              <input type="checkbox" ${st ? "checked" : ""} onchange="toggleOne(${idx})">
               <span class="slider"></span>
             </label>
           </div>
-          <div>
-            <div class="relay-title" title="${escapeHtml(name)}">${escapeHtml(name)}</div>
-            <div class="relay-subrow">
-              <span class="relay-sub ${st ? 'is-on' : ''}">Relay ${idx + 1} • ${st ? 'ON' : 'OFF'}</span>
-              ${rem > 0 ? `<span class="timer-badge">${rem}p → ${target}</span>` : ''}
-            </div>
-          </div>`;
+          <div class="relay-title">${escapeHtml(names[idx] || ("Relay " + (idx + 1)))}</div>
+        `;
         grid.appendChild(card);
-      }
+      });
 
-      renderProfileTab();
+      document.getElementById("masterBtn").innerText = anyOn ? "Tắt tất cả thiết bị" : "Bật tất cả thiết bị";
+      document.getElementById("masterBtn").dataset.next = anyOn ? "0" : "1";
     }
 
-    function renderProfileTab() {
-      if (!stateData) return;
-      const activeCount = (stateData.relays || []).filter(Boolean).length;
-      document.getElementById('profileModeBadge').innerText = stateData.wifiConnected ? 'ONLINE • WiFi STA' : 'AP NỘI BỘ';
-      document.getElementById('profileSummaryBox').innerHTML =
-        `<b>Thiết bị đang bật:</b> ${activeCount} / ${NUM_RELAYS} kênh<br>` +
-        `<b>Địa chỉ IP:</b> ${escapeHtml(stateData.ip || '-')}<br>` +
-        `<b>Firebase Realtime:</b> ${stateData.firebaseConnected ? 'Đã đồng bộ' : 'Chưa kết nối'}<br>` +
-        `<b>Vị trí:</b> ${escapeHtml(stateData.location || '-')} (${Number(stateData.lat || 0).toFixed(4)}, ${Number(stateData.lon || 0).toFixed(4)})`;
-    }
-
-    async function refreshAll() {
+    async function pushRelays() {
+      isUpdating = true;
       try {
-        const res = await fetch('/api/status');
-        if (!res.ok) throw new Error('HTTP ' + res.status);
+        await fetch(`${NODE_URL}/relays.json`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(relays)
+        });
+      } finally {
+        setTimeout(() => { isUpdating = false; }, 600);
+      }
+    }
+
+    async function toggleOne(idx) {
+      relays[idx] = !relays[idx];
+      render();
+      await pushRelays();
+    }
+
+    async function toggleAll() {
+      const nextVal = document.getElementById("masterBtn").dataset.next === "1";
+      relays = Array(NUM_RELAYS).fill(nextVal);
+      render();
+      await pushRelays();
+    }
+
+    async function pollFirebase() {
+      if (isUpdating) return;
+      const pill = document.getElementById("cloudStatus");
+      try {
+        const res = await fetch(`${NODE_URL}.json`);
+        if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
-        stateData = data;
-      } catch (e) {
-        if (!stateData) {
-          stateData = { ...DEFAULT_MOCK_DATA };
+        pill.className = "status-pill";
+        pill.innerText = "Cloud Online";
+
+        if (data && Array.isArray(data.relays)) {
+          for (let i = 0; i < NUM_RELAYS; i++) {
+            relays[i] = Boolean(data.relays[i]);
+          }
         }
-      }
-
-      document.getElementById('netStatusBox').innerHTML =
-        `<b>Chế độ:</b> ${escapeHtml(stateData.mode)} &nbsp;|&nbsp; <b>IP:</b> ${escapeHtml(stateData.ip)}<br>` +
-        `<b>Firebase Cloud:</b> ${stateData.firebaseConnected ? 'Đã đồng bộ Internet' : 'Chưa kết nối'}<br>` +
-        `<b>Tọa độ:</b> ${Number(stateData.lat).toFixed(4)}, ${Number(stateData.lon).toFixed(4)}<br>` +
-        `<b>WiFi đã lưu:</b> ${escapeHtml(stateData.ssid || '(chưa cài đặt)')}`;
-
-      renderHome(stateData);
-      syncTimerCancelBtn();
-    }
-
-    async function toggleRelay(idx) {
-      try {
-        await fetch(`/api/toggle?ch=${idx}`);
-      } catch (e) {
-        if (stateData && stateData.relays) stateData.relays[idx] = !stateData.relays[idx];
-      }
-      refreshAll();
-    }
-
-    async function setBatchAll(targetState) {
-      try {
-        await fetch(`/api/all?state=${targetState}`);
-      } catch (e) {
-        if (stateData && stateData.relays) {
-          stateData.relays = stateData.relays.map(() => Boolean(targetState));
+        if (data && Array.isArray(data.names)) {
+          for (let i = 0; i < NUM_RELAYS; i++) {
+            if (data.names[i]) names[i] = String(data.names[i]);
+          }
         }
-      }
-      refreshAll();
-    }
-
-    function populateTimerChannels() {
-      if (!stateData) return;
-      const sel1 = document.getElementById('timerChannel');
-      const sel2 = document.getElementById('scheduleRelay');
-      const prev1 = sel1.value;
-      const prev2 = sel2.value;
-      sel1.innerHTML = '';
-      sel2.innerHTML = '';
-      for (let i = 0; i < NUM_RELAYS; i++) {
-        const label = `Relay ${i + 1} - ${(stateData.names && stateData.names[i]) || ('Kênh ' + (i + 1))}`;
-        sel1.add(new Option(label, i));
-        sel2.add(new Option(label, i));
-      }
-      if (timerSelectInitialized) {
-        sel1.value = prev1;
-        sel2.value = prev2;
-      }
-      timerSelectInitialized = true;
-      syncTimerCancelBtn();
-    }
-
-    function syncTimerCancelBtn() {
-      const sel = document.getElementById('timerChannel');
-      if (!sel || !stateData) return;
-      const idx = parseInt(sel.value || '0', 10);
-      const rem = (stateData.timers && stateData.timers[idx]) || 0;
-      const btn = document.getElementById('cancelTimerBtn');
-      if (rem > 0) {
-        btn.style.display = 'block';
-        btn.innerText = `Hủy hẹn giờ đang chạy (còn ${rem} phút)`;
-      } else {
-        btn.style.display = 'none';
+        render();
+      } catch (err) {
+        pill.className = "status-pill offline";
+        pill.innerText = "Mất kết nối Cloud";
       }
     }
 
-    async function submitTimer(target) {
-      const idx = parseInt(document.getElementById('timerChannel').value, 10);
-      const mins = parseInt(document.getElementById('timerMinutes').value, 10);
-      if (!mins || mins < 1) {
-        document.getElementById('timerFeedback').innerText = 'Vui lòng nhập số phút >= 1';
-        return;
-      }
-      await fetch(`/api/timer?ch=${idx}&min=${mins}&target=${target}`).catch(() => {});
-      document.getElementById('timerFeedback').innerText = `Đã đặt hẹn giờ ${mins} phút cho Relay ${idx + 1}.`;
-      refreshAll();
-    }
-
-    async function submitQuickTimer(target) {
-      const idx = parseInt(document.getElementById('quickTimerCh').value, 10);
-      const mins = parseInt(document.getElementById('quickTimerMin').value, 10);
-      if (!mins || mins < 1) {
-        document.getElementById('quickTimerFb').innerText = 'Số phút phải >= 1';
-        return;
-      }
-      await fetch(`/api/timer?ch=${idx}&min=${mins}&target=${target}`).catch(() => {});
-      document.getElementById('quickTimerFb').innerText = `Đã hẹn ${mins} phút cho Relay ${idx + 1}.`;
-      refreshAll();
-      setTimeout(closeQuickAddModal, 450);
-    }
-
-    async function cancelTimer() {
-      const idx = parseInt(document.getElementById('timerChannel').value, 10);
-      await fetch(`/api/timer?ch=${idx}&min=0&target=0`).catch(() => {});
-      document.getElementById('timerFeedback').innerText = 'Đã hủy hẹn giờ.';
-      refreshAll();
-    }
-
-    async function loadWeeklySchedules() {
-      try {
-        const res = await fetch('/api/schedules');
-        const arr = await res.json();
-        const box = document.getElementById('weeklyScheduleList');
-        const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-        const active = arr.filter(s => s.enabled);
-        if (!active.length) {
-          box.innerHTML = '<div class="info-box" style="margin:0;">Chưa có lịch hẹn lặp lại nào.</div>';
-          return;
-        }
-        box.innerHTML = active.map(s => {
-          const dayText = days.filter((d, i) => s.days & (1 << i)).join(', ');
-          const nm = (stateData && stateData.names[s.relay]) || `Relay ${s.relay + 1}`;
-          return `<div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <b>${escapeHtml(nm)}</b> • ${String(s.hour).padStart(2, '0')}:${String(s.minute).padStart(2, '0')} (${s.on ? 'BẬT' : 'TẮT'})<br>
-              <span style="color:#8c86ff;">${dayText}</span>
-            </div>
-            <button type="button" class="btn-subtle" onclick="deleteWeeklySchedule(${s.id})">Xóa</button>
-          </div>`;
-        }).join('');
-      } catch (e) {
-        document.getElementById('weeklyScheduleList').innerHTML =
-          '<div class="info-box" style="margin:0;">Kết nối tới ESP32 để xem danh sách lịch hẹn đã lưu.</div>';
-      }
-    }
-
-    async function saveWeeklySchedule(target) {
-      const days = [...document.querySelectorAll('.schedule-day:checked')]
-        .reduce((m, el) => m | (1 << Number(el.value)), 0);
-      const relay = Number(document.getElementById('scheduleRelay').value);
-      const hour = Number(document.getElementById('scheduleHour').value);
-      const minute = Number(document.getElementById('scheduleMinute').value);
-      if (!days) {
-        document.getElementById('scheduleFeedback').innerText = 'Hãy chọn ít nhất 1 ngày trong tuần.';
-        return;
-      }
-      const q = `relay=${relay}&days=${days}&hour=${hour}&minute=${minute}&target=${target}`;
-      try {
-        const res = await fetch('/api/schedule/save?' + q);
-        const d = await res.json();
-        document.getElementById('scheduleFeedback').innerText = d.message || 'Đã lưu lịch hẹn.';
-      } catch (e) {
-        document.getElementById('scheduleFeedback').innerText = 'Đã gửi yêu cầu lưu lịch hẹn.';
-      }
-      loadWeeklySchedules();
-    }
-
-    async function deleteWeeklySchedule(id) {
-      await fetch('/api/schedule/delete?id=' + id).catch(() => {});
-      loadWeeklySchedules();
-    }
-
-    function populateSettingsFields() {
-      if (!stateData) return;
-      if (!settingsInitialized) {
-        document.getElementById('ssidField').value = stateData.ssid || '';
-        document.getElementById('locationField').value = stateData.location || '';
-        settingsInitialized = true;
-      }
-      const wrap = document.getElementById('relayNameFields');
-      wrap.innerHTML = '';
-      for (let i = 0; i < NUM_RELAYS; i++) {
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.className = 'input-ctrl';
-        inp.id = `rName_${i}`;
-        inp.maxLength = 30;
-        inp.value = (stateData.names && stateData.names[i]) || `Relay ${i + 1}`;
-        inp.style.marginBottom = '8px';
-        wrap.appendChild(inp);
-      }
-    }
-
-    async function scanWiFi() {
-      const fb = document.getElementById('wifiFeedback');
-      const sel = document.getElementById('wifiList');
-      fb.innerText = 'Đang quét mạng WiFi xung quanh...';
-      try {
-        const res = await fetch('/api/scan');
-        const list = await res.json();
-        sel.innerHTML = '<option value="">-- Chọn WiFi tìm thấy --</option>';
-        list.forEach(net => {
-          if (!net.ssid) return;
-          sel.add(new Option(`${net.ssid} (${net.rssi} dBm)${net.enc ? ' 🔒' : ''}`, net.ssid));
-        });
-        sel.style.display = 'block';
-        fb.innerText = list.length ? `Tìm thấy ${list.length} mạng WiFi.` : 'Không tìm thấy mạng WiFi nào.';
-      } catch (e) {
-        fb.innerText = 'Không quét được WiFi khi chưa kết nối trực tiếp ESP32.';
-      }
-    }
-
-    async function saveWiFi() {
-      const ssid = document.getElementById('ssidField').value.trim();
-      const pass = document.getElementById('passField').value;
-      if (!ssid) {
-        document.getElementById('wifiFeedback').innerText = 'Vui lòng nhập tên WiFi!';
-        return;
-      }
-      document.getElementById('wifiFeedback').innerText = 'Đang lưu cấu hình WiFi...';
-      try {
-        const res = await fetch('/api/wifi', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(pass)}`
-        });
-        const d = await res.json();
-        document.getElementById('wifiFeedback').innerText = d.message;
-      } catch (e) {
-        document.getElementById('wifiFeedback').innerText = 'Đã gửi lệnh đổi WiFi.';
-      }
-    }
-
-    async function saveLocation(autoDetect) {
-      const loc = autoDetect ? '' : document.getElementById('locationField').value;
-      document.getElementById('locFeedback').innerText = autoDetect ? 'Đang tự định vị...' : 'Đang lưu vị trí...';
-      try {
-        const res = await fetch('/api/location', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: `loc=${encodeURIComponent(loc)}`
-        });
-        const d = await res.json();
-        document.getElementById('locFeedback').innerText = d.message;
-      } catch (e) {
-        if (stateData) stateData.location = autoDetect ? 'Hà Nội' : (loc || 'Hà Nội');
-        document.getElementById('locFeedback').innerText = 'Đã cập nhật hiển thị vị trí.';
-      }
-      settingsInitialized = false;
-      refreshAll();
-    }
-
-    async function saveNames() {
-      const params = [];
-      for (let i = 0; i < NUM_RELAYS; i++) {
-        const val = document.getElementById(`rName_${i}`).value;
-        params.push(`n${i}=${encodeURIComponent(val)}`);
-        if (stateData && stateData.names) stateData.names[i] = val;
-      }
-      try {
-        const res = await fetch('/api/names', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: params.join('&')
-        });
-        const d = await res.json();
-        document.getElementById('nameFeedback').innerText = d.message;
-      } catch (e) {
-        document.getElementById('nameFeedback').innerText = 'Đã cập nhật tên 6 kênh.';
-      }
-      refreshAll();
-    }
-
-    refreshAll();
-    setInterval(refreshAll, 1500);
+    render();
+    pollFirebase();
+    setInterval(pollFirebase, 1500);
   </script>
 </body>
 </html>
