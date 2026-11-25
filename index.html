@@ -10,13 +10,13 @@
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       background-color: #08070d;
       background-image:
-        radial-gradient(circle at 78% 15%, rgba(124, 92, 250, 0.34) 0%, rgba(18, 15, 32, 0) 50%),
-        radial-gradient(circle at 18% 82%, rgba(88, 66, 185, 0.16) 0%, rgba(8, 7, 13, 0) 52%);
+        radial-gradient(circle at 75% 18%, rgba(112, 82, 224, 0.28) 0%, rgba(18, 15, 32, 0) 48%),
+        radial-gradient(circle at 20% 78%, rgba(88, 66, 185, 0.14) 0%, rgba(8, 7, 13, 0) 50%);
       color: #ffffff;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding-bottom: 94px;
+      padding-bottom: 92px;
     }
     .app { width: 100%; max-width: 440px; padding: 18px 18px 12px; }
 
@@ -26,7 +26,7 @@
       align-items: center;
       margin-bottom: 18px;
     }
-    .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; color: #ffffff; }
+    .header h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.3px; }
     .wifi-indicator { display: flex; align-items: center; gap: 8px; }
     .wifi-led-svg { width: 38px; height: 38px; flex-shrink: 0; }
     .wifi-led-label { font-size: 13px; font-weight: 600; line-height: 1.2; color: #22e53b; text-align: center; }
@@ -67,48 +67,28 @@
 
     .relay-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 20px; }
     .relay-card {
-      background: linear-gradient(155deg, rgba(36, 35, 44, 0.94) 0%, rgba(22, 21, 28, 0.97) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(155deg, rgba(36, 35, 44, 0.92) 0%, rgba(23, 22, 29, 0.96) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
       border-radius: 22px;
       padding: 14px 15px 15px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       min-height: 122px;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease, background 0.25s ease;
-    }
-    .relay-card.is-on {
-      background: linear-gradient(155deg, rgba(44, 41, 66, 0.96) 0%, rgba(25, 23, 38, 0.98) 100%);
-      border-color: rgba(139, 125, 255, 0.42);
-      box-shadow: 0 10px 24px rgba(91, 92, 230, 0.22), 0 0 18px rgba(129, 140, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    }
-    .relay-card.is-on .relay-title {
-      color: #ffffff;
-      text-shadow: 0 0 10px rgba(167, 139, 250, 0.25);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
     .relay-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
-    .relay-icon-box { width: 72px; height: 54px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; transition: transform 0.2s ease, filter 0.25s ease; }
-    .relay-card.is-on .relay-icon-box { transform: scale(1.04); filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.25)); }
-
-    @keyframes spinFan {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .fan-blades.spinning {
-      transform-origin: 27px 21px;
-      animation: spinFan 1.4s linear infinite;
-    }
+    .relay-icon-box { width: 72px; height: 54px; display: flex; align-items: center; justify-content: flex-start; cursor: pointer; }
 
     .switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; margin-top: 2px; }
     .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #3d3c47; transition: 0.25s; border-radius: 34px; }
+    .slider { position: absolute; cursor: pointer; inset: 0; background-color: #36363f; transition: 0.25s; border-radius: 34px; }
     .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: #ffffff; transition: 0.25s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.4); }
-    input:checked + .slider { background-color: #5b5ce6; box-shadow: 0 0 12px rgba(91, 92, 230, 0.55); }
+    input:checked + .slider { background-color: #5b5ce6; }
     input:checked + .slider:before { transform: translateX(22px); }
 
     .relay-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .relay-title { font-size: 16px; font-weight: 500; color: #d6d6e0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s ease; }
+    .relay-title { font-size: 16px; font-weight: 500; color: #f3f3f7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .timer-badge { font-size: 10.5px; font-weight: 600; color: #fde047; background: rgba(250, 204, 21, 0.16); padding: 2px 6px; border-radius: 8px; flex-shrink: 0; }
 
     .master-btn {
@@ -125,9 +105,7 @@
       justify-content: space-between;
       cursor: pointer;
       box-shadow: 0 8px 24px rgba(84, 85, 232, 0.38);
-      transition: transform 0.15s ease;
     }
-    .master-btn:active { transform: scale(0.99); }
     .master-btn-center { display: flex; align-items: center; gap: 11px; }
 
     .bottom-nav {
@@ -138,20 +116,20 @@
       width: 100%;
       max-width: 440px;
       height: 76px;
-      background: linear-gradient(180deg, #262530 0%, #191821 100%);
-      border-top: 1px solid rgba(255, 255, 255, 0.11);
+      background: linear-gradient(180deg, #25242e 0%, #191820 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       border-top-left-radius: 30px;
       border-top-right-radius: 30px;
       display: flex;
       justify-content: space-around;
       align-items: center;
       padding: 4px 10px 8px;
-      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.52);
+      box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.5);
       z-index: 50;
     }
     .nav-btn { background: none; border: none; color: #9e9eb0; font-size: 12px; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; padding: 6px 12px; }
-    .nav-btn.active { color: #8f88ff; }
-    .nav-btn.active::after { content: ""; width: 32px; height: 3px; background: #a78bfa; border-radius: 3px; margin-top: 1px; }
+    .nav-btn.active { color: #818cf8; }
+    .nav-btn.active::after { content: ""; width: 28px; height: 3px; background: #818cf8; border-radius: 3px; margin-top: 1px; }
 
     .tab-view { display: none; }
     .tab-view.active { display: block; }
@@ -171,78 +149,6 @@
     .days-grid label { display: flex; align-items: center; gap: 6px; background: #14131b; padding: 7px 9px; border-radius: 10px; cursor: pointer; }
     .info-box { background: #13121a; border-radius: 12px; padding: 11px 12px; font-size: 12.5px; color: #b4b4c4; line-height: 1.55; margin-bottom: 12px; }
     .feedback { font-size: 13px; color: #4ade80; margin-top: 8px; text-align: center; }
-
-    .weather-right-col {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    .theme-btn-sample {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      border: 1px solid rgba(139, 125, 255, 0.34);
-      background: rgba(34, 24, 74, 0.88);
-      color: #8b7dff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 6px 16px rgba(18, 10, 48, 0.45);
-      transition: transform 0.18s ease, background-color 0.2s ease, color 0.2s ease;
-    }
-    .theme-btn-sample:active { transform: scale(0.94); }
-
-    body.light-theme {
-      background-color: #f3f4f8;
-      background-image:
-        radial-gradient(circle at 78% 15%, rgba(99, 102, 241, 0.16) 0%, rgba(243, 244, 248, 0) 48%),
-        radial-gradient(circle at 20% 80%, rgba(129, 140, 248, 0.12) 0%, rgba(243, 244, 248, 0) 50%);
-      color: #111827;
-    }
-    body.light-theme .header h1 { color: #111827; }
-    body.light-theme .weather-cond,
-    body.light-theme .weather-meta,
-    body.light-theme .clock-box { color: #374151; }
-    body.light-theme .weather-divider { background: rgba(17, 24, 39, 0.15); }
-    body.light-theme .theme-btn-sample {
-      background: #ffffff;
-      color: #4f46e5;
-      border-color: rgba(79, 70, 229, 0.22);
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-    }
-    body.light-theme .relay-card,
-    body.light-theme .panel-card {
-      background: linear-gradient(155deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.98) 100%);
-      border-color: rgba(17, 24, 39, 0.08);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-    }
-    body.light-theme .relay-card.is-on {
-      background: linear-gradient(155deg, rgba(238, 242, 255, 0.98) 0%, rgba(255, 255, 255, 0.99) 100%);
-      border-color: rgba(79, 70, 229, 0.35);
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.12);
-    }
-    body.light-theme .relay-title,
-    body.light-theme .panel-title,
-    body.light-theme .page-title { color: #111827; }
-    body.light-theme .slider { background-color: #cbd5e1; }
-    body.light-theme .input-ctrl,
-    body.light-theme .info-box,
-    body.light-theme .days-grid label {
-      background: #f1f5f9;
-      color: #111827;
-      border-color: rgba(17, 24, 39, 0.12);
-    }
-    body.light-theme .bottom-nav {
-      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-      border-top-color: rgba(17, 24, 39, 0.09);
-      box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.08);
-    }
-    body.light-theme .nav-btn { color: #6b7280; }
-    body.light-theme .nav-btn.active { color: #4f46e5; }
-    body.light-theme .nav-btn.active::after { background: #4f46e5; }
   </style>
 </head>
 <body>
@@ -322,7 +228,7 @@
                 <line x1="5.5" y1="1.5" x2="5.5" y2="4"/><line x1="10.5" y1="1.5" x2="10.5" y2="4"/>
               </svg>
             </span>
-            <span id="dateText">Th 2, 20/11/2026</span>
+            <span id="dateText">Th 2, 23/11/2026</span>
           </div>
           <div class="meta-row">
             <span class="meta-icon">
@@ -334,17 +240,12 @@
           </div>
         </div>
 
-        <div class="weather-right-col">
-          <button type="button" class="theme-btn-sample" id="themeToggleBtn" onclick="toggleThemeMode()" title="Đổi nền sáng / tối" aria-label="Đổi nền sáng / tối">
-            <span id="themeIconWrap"></span>
-          </button>
-          <div class="clock-box" title="Thời gian thực qua Internet">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E4E4EC" stroke-width="2">
-              <circle cx="12" cy="12" r="9"></circle>
-              <polyline points="12 7 12 12 15.5 14"></polyline>
-            </svg>
-            <span id="clockText">09:41</span>
-          </div>
+        <div class="clock-box" title="Thời gian thực qua Internet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E4E4EC" stroke-width="2">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15.5 14"></polyline>
+          </svg>
+          <span id="clockText">09:41</span>
         </div>
       </div>
 
@@ -365,7 +266,7 @@
       </button>
     </div>
 
-    <!-- TAB 2: HẸN GIỜ & LỊCH TỰ ĐỘNG -->
+    <!-- TAB 2: HẸN GIỜ & LỊCH TỰ ĐỘNG (Y HỆT WEB LOCAL) -->
     <div id="tab-timer" class="tab-view">
       <div class="page-title">Hẹn giờ & Lịch tự động</div>
 
@@ -425,7 +326,7 @@
       </div>
     </div>
 
-    <!-- TAB 3: CÀI ĐẶT HỆ THỐNG -->
+    <!-- TAB 3: CÀI ĐẶT HỆ THỐNG (Y HỆT WEB LOCAL) -->
     <div id="tab-settings" class="tab-view">
       <div class="page-title">Cài đặt hệ thống</div>
       <div class="info-box" id="netStatusBox">Đang tải thông tin kết nối...</div>
@@ -500,7 +401,7 @@
     <button class="nav-btn" onclick="switchTab('settings', this)">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="3"></circle>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06-.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
       </svg>
       <span>Cài đặt</span>
     </button>
@@ -542,7 +443,7 @@
       }))
     };
 
-    let cloudCountdown = Array(NUM_RELAYS).fill(null);
+    let cloudCountdown = Array(NUM_RELAYS).fill(null); // { endAt, target }
     let anyDeviceOn = false;
     let isUpdating = false;
     let settingsInitialized = false;
@@ -559,7 +460,7 @@
           </svg>`;
         case 1:
           return `<svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-            <defs><radialGradient id="bulbGlow" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="${isOn ? '0.92' : '0'}"/><stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/></radialGradient></defs>
+            <defs><radialGradient id="bulbGlow" cx="50%" cy="42%" r="52%"><stop offset="0%" stop-color="#FFFFFF" stop-opacity="${isOn ? '0.9' : '0'}"/><stop offset="100%" stop-color="#FEF08A" stop-opacity="0"/></radialGradient></defs>
             ${isOn ? '<circle cx="26" cy="21" r="21" fill="url(#bulbGlow)"/>' : ''}
             <path d="M26 5C17.2 5 10 12.2 10 21c0 5.8 3.1 10.9 7.8 13.7 1.4.8 2.2 2.3 2.2 3.9V40h12v-1.4c0-1.6.8-3.1 2.2-3.9C38.9 31.9 42 26.8 42 21 42 12.2 34.8 5 26 5z" fill="${isOn ? '#F8FAFC' : '#525663'}"/>
             <ellipse cx="21" cy="16" rx="3.4" ry="6.2" transform="rotate(-18 21 16)" fill="#FFFFFF" opacity="${isOn ? '0.85' : '0.2'}"/>
@@ -567,7 +468,7 @@
           </svg>`;
         case 2:
           return `<svg width="68" height="48" viewBox="0 0 68 48" fill="none">
-            <path d="M13 13a5 5 0 0 1 5-5h32a5 5 0 0 1 5 5v12H13V13z" fill="${isOn ? '#E5E7EB' : '#D1D5DB'}"/>
+            <path d="M13 13a5 5 0 0 1 5-5h32a5 5 0 0 1 5 5v12H13V13z" fill="#D1D5DB"/>
             <line x1="34" y1="8" x2="34" y2="25" stroke="#9CA3AF" stroke-width="1.5"/>
             <rect x="7" y="18" width="8.5" height="15" rx="3.5" fill="#E5E7EB"/><rect x="52.5" y="18" width="8.5" height="15" rx="3.5" fill="#E5E7EB"/>
             <rect x="14" y="24" width="40" height="9" rx="3" fill="#F3F4F6"/>
@@ -575,12 +476,10 @@
           </svg>`;
         case 3:
           return `<svg width="54" height="54" viewBox="0 0 54 54" fill="none">
-            <circle cx="27" cy="21" r="16.5" stroke="${isOn ? '#7DD3FC' : '#6B7280'}" stroke-width="1.8" fill="rgba(14, 165, 233, ${isOn ? '0.16' : '0.03'})"/>
-            <g class="fan-blades ${isOn ? 'spinning' : ''}">
-              <path d="M27 21L22 9.5C25 8 29 8 32 9.5L27 21Z" fill="${isOn ? '#38BDF8' : '#64748B'}"/>
-              <path d="M27 21L38.5 25C38.5 28.5 36.4 31.5 33.4 33L27 21Z" fill="${isOn ? '#0EA5E9' : '#475569'}"/>
-              <path d="M27 21L15.5 25C15.5 28.5 17.6 31.5 20.6 33L27 21Z" fill="${isOn ? '#7DD3FC' : '#94A3B8'}"/>
-            </g>
+            <circle cx="27" cy="21" r="16.5" stroke="${isOn ? '#BAE6FD' : '#6B7280'}" stroke-width="1.8" fill="rgba(14, 165, 233, ${isOn ? '0.12' : '0.03'})"/>
+            <path d="M27 21L22 9.5C25 8 29 8 32 9.5L27 21Z" fill="${isOn ? '#38BDF8' : '#64748B'}"/>
+            <path d="M27 21L38.5 25C38.5 28.5 36.4 31.5 33.4 33L27 21Z" fill="${isOn ? '#0EA5E9' : '#475569'}"/>
+            <path d="M27 21L15.5 25C15.5 28.5 17.6 31.5 20.6 33L27 21Z" fill="${isOn ? '#7DD3FC' : '#94A3B8'}"/>
             <circle cx="27" cy="21" r="3.6" fill="#F8FAFC"/>
             <rect x="25" y="37.5" width="4" height="9" fill="#CBD5E1"/><ellipse cx="27" cy="47.5" rx="11" ry="3.2" fill="#E2E8F0"/>
           </svg>`;
@@ -596,12 +495,12 @@
             <ellipse cx="24" cy="44" rx="12" ry="3.2" fill="#D97706"/>
             <path d="M24 43L32 25L22 13" stroke="#F59E0B" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M18 12L34 8L41 19L23 22L18 12Z" fill="#27272A" stroke="#71717A" stroke-width="1.4"/>
-            <path d="M33 20.5L47 42H27L33 20.5Z" fill="#FDE047" opacity="${isOn ? '0.68' : '0.08'}"/>
+            <path d="M33 20.5L47 42H27L33 20.5Z" fill="#FDE047" opacity="${isOn ? '0.62' : '0.08'}"/>
           </svg>`;
         case 6:
           return `<svg width="68" height="48" viewBox="0 0 68 48" fill="none">
             <rect x="12" y="38" width="44" height="4" rx="2" fill="#475569"/>
-            <rect x="20" y="16" width="28" height="20" rx="4" fill="${isOn ? '#3B82F6' : '#2563EB'}"/>
+            <rect x="20" y="16" width="28" height="20" rx="4" fill="${isOn ? '#2563EB' : '#3B82F6'}"/>
             <line x1="25" y1="19" x2="43" y2="19" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
             <line x1="25" y1="24" x2="43" y2="24" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
             <line x1="25" y1="29" x2="43" y2="29" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round"/>
@@ -711,12 +610,12 @@
 
       stateData.relays.forEach((st, idx) => {
         if (st) onCount++;
-        const name = stateData.names[idx] || DEFAULT_NAMES[idx] || `Relay ${idx + 1}`;
+        const name = stateData.names[idx] || `Relay ${idx + 1}`;
         const rem = stateData.timers[idx] || 0;
         const target = stateData.timerTargets[idx] ? "BẬT" : "TẮT";
 
         const card = document.createElement("div");
-        card.className = `relay-card${st ? " is-on" : ""}`;
+        card.className = "relay-card";
         card.innerHTML = `
           <div class="relay-top">
             <div class="relay-icon-box" onclick="toggleRelay(${idx})">${getDeviceSvg(idx, st)}</div>
@@ -770,6 +669,7 @@
       await pushRelays();
     }
 
+    // ===== HẸN GIỜ ĐẾM NGƯỢC =====
     function populateTimerChannels() {
       const sel1 = document.getElementById("timerChannel");
       const sel2 = document.getElementById("scheduleRelay");
@@ -778,7 +678,7 @@
       sel1.innerHTML = "";
       sel2.innerHTML = "";
       for (let i = 0; i < NUM_RELAYS; i++) {
-        const label = `Relay ${i + 1} - ${stateData.names[i] || DEFAULT_NAMES[i] || ("Kênh " + (i + 1))}`;
+        const label = `Relay ${i + 1} - ${stateData.names[i] || ("Kênh " + (i + 1))}`;
         sel1.add(new Option(label, i));
         sel2.add(new Option(label, i));
       }
@@ -852,6 +752,7 @@
       }
     }
 
+    // ===== LỊCH HẸN LẶP THEO TUẦN (ĐỒNG BỘ FIREBASE <-> ESP32) =====
     function renderWeeklySchedules() {
       const box = document.getElementById("weeklyScheduleList");
       const days = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
@@ -862,7 +763,7 @@
       }
       box.innerHTML = active.map(s => {
         const dayText = days.filter((d, i) => s.days & (1 << i)).join(", ");
-        const nm = stateData.names[s.relay] || DEFAULT_NAMES[s.relay] || `Relay ${s.relay + 1}`;
+        const nm = stateData.names[s.relay] || `Relay ${s.relay + 1}`;
         return `<div class="info-box" style="display:flex; justify-content:space-between; align-items:center;">
           <div>
             <b>${escapeHtml(nm)}</b> • ${String(s.hour).padStart(2, "0")}:${String(s.minute).padStart(2, "0")} (${s.on ? "BẬT" : "TẮT"})<br>
@@ -919,6 +820,7 @@
       }
     }
 
+    // ===== CÀI ĐẶT HỆ THỐNG =====
     function populateSettingsFields() {
       if (!settingsInitialized) {
         document.getElementById("ssidField").value = stateData.ssid || "";
@@ -933,7 +835,7 @@
         inp.className = "input-ctrl";
         inp.id = `rName_${i}`;
         inp.maxLength = 30;
-        inp.value = stateData.names[i] || DEFAULT_NAMES[i] || `Relay ${i + 1}`;
+        inp.value = stateData.names[i] || `Relay ${i + 1}`;
         inp.style.marginBottom = "8px";
         wrap.appendChild(inp);
       }
@@ -990,6 +892,7 @@
       }
     }
 
+    // ===== ĐỒNG BỘ FIREBASE =====
     let lastWeatherCoords = "";
     async function refreshAll() {
       if (isUpdating) return;
@@ -1042,31 +945,6 @@
         renderHome();
       }
     }
-
-    function renderThemeIcon(isLight) {
-      const wrap = document.getElementById("themeIconWrap");
-      if (!wrap) return;
-      if (isLight) {
-        wrap.innerHTML = `<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="5"></line><line x1="12" y1="19" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.05" y2="7.05"></line><line x1="16.95" y1="16.95" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="5" y2="12"></line><line x1="19" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.05" y2="16.95"></line><line x1="16.95" y1="7.05" x2="19.07" y2="4.93"></line></svg>`;
-      } else {
-        wrap.innerHTML = `<svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z"></path></svg>`;
-      }
-    }
-
-    function applySavedTheme() {
-      const isLight = localStorage.getItem("tsh_theme") === "light";
-      document.body.classList.toggle("light-theme", isLight);
-      renderThemeIcon(isLight);
-    }
-
-    function toggleThemeMode() {
-      const nextLight = !document.body.classList.contains("light-theme");
-      document.body.classList.toggle("light-theme", nextLight);
-      localStorage.setItem("tsh_theme", nextLight ? "light" : "dark");
-      renderThemeIcon(nextLight);
-    }
-
-    applySavedTheme();
 
     updateClockAndDate();
     fetchWeather(stateData.lat, stateData.lon);
